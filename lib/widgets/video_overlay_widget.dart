@@ -1,42 +1,39 @@
 import 'package:flutter/material.dart';
 
-class VideoOverlayWidget extends StatefulWidget {
-  final bool isMuted;
+class VideoOverlayWidget extends StatelessWidget {
   final Duration position;
   final Duration duration;
+  final bool isMuted;
+  final bool isPlaying;
 
   const VideoOverlayWidget({
     Key? key,
-    required this.isMuted,
     required this.position,
     required this.duration,
+    required this.isMuted,
+    required this.isPlaying,
   }) : super(key: key);
 
-  @override
-  State<VideoOverlayWidget> createState() => _VideoOverlayWidgetState();
-}
-
-class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Positioned(
-          left: 10,
-          bottom: 10,
-          child: Icon(
-            widget.isMuted ? Icons.volume_off : Icons.volume_up,
-            color: Colors.white,
+        if (isPlaying)
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                '${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')} / ${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                style: TextStyle(color: Colors.white, fontSize: 14.0),
+              ),
+            ),
           ),
-        ),
-        Positioned(
-          right: 10,
-          bottom: 10,
-          child: Text(
-            '${widget.position.inSeconds} / ${widget.duration.inSeconds} s',
-            style: const TextStyle(color: Colors.white),
+        if (isMuted)
+          Align(
+            alignment: Alignment.center,
+            child: Icon(Icons.volume_off, color: Colors.white, size: 48.0),
           ),
-        ),
       ],
     );
   }

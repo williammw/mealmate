@@ -9,11 +9,20 @@ class FeedItem extends StatelessWidget {
   const FeedItem({Key? key, required this.feedItem}) : super(key: key);
 
   Widget _buildMediaContent() {
+    final double desiredHeight = 500;
+    final double aspectRatio = (16 / 9);
+
     if (feedItem.postVideoUrl.isNotEmpty && feedItem.showVideoFirst) {
-      return VideoPlayerWidget(url: feedItem.postVideoUrl);
+      return SizedBox(
+        height: desiredHeight,
+        child: AspectRatio(
+          aspectRatio: aspectRatio,
+          child: VideoPlayerWidget(url: feedItem.postVideoUrl),
+        ),
+      );
     } else if (feedItem.postImageUrl.isNotEmpty) {
       return Container(
-        height: 500,
+        height: desiredHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
@@ -22,7 +31,13 @@ class FeedItem extends StatelessWidget {
         ),
       );
     } else if (feedItem.postVideoUrl.isNotEmpty) {
-      return VideoPlayerWidget(url: feedItem.postVideoUrl);
+      return SizedBox(
+        height: desiredHeight,
+        child: AspectRatio(
+          aspectRatio: aspectRatio,
+          child: VideoPlayerWidget(url: feedItem.postVideoUrl),
+        ),
+      );
     } else {
       return const SizedBox.shrink(); // Return an empty widget if no media is available.
     }
