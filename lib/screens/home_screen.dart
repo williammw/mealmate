@@ -45,14 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ? NestedScrollView(
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
-                    const CustomSliverAppBar(title: 'SnapRecipe'),
+                    const CustomSliverAppBar(title: 'MealMate'),
                   ];
                 },
                 body: _children[_currentIndex],
               )
             : CustomScrollView(
                 slivers: <Widget>[
-                  const CustomSliverAppBar(title: 'SnapRecipe'),
+                  const CustomSliverAppBar(title: 'MealMate'),
                   SliverFillRemaining(
                     hasScrollBody: false,
                     child: _children[_currentIndex],
