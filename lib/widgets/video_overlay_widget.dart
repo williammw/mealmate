@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-class VideoOverlayWidget extends StatelessWidget {
+class VideoOverlayWidget extends StatefulWidget {
   final Duration position;
   final Duration duration;
   final bool isMuted;
@@ -15,24 +17,48 @@ class VideoOverlayWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<VideoOverlayWidget> createState() => _VideoOverlayWidgetState();
+}
+
+class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
+  bool _showMuteIcon = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set up a timer to hide the mute icon after 2 seconds
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _showMuteIcon = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (isPlaying)
+        if (widget.isPlaying)
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Text(
-                '${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')} / ${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                '${widget.position.inMinutes}:${(widget.position.inSeconds % 60).toString().padLeft(2, '0')} / ${widget.duration.inMinutes}:${(widget.duration.inSeconds % 60).toString().padLeft(2, '0')}',
                 style: TextStyle(color: Colors.white, fontSize: 14.0),
               ),
             ),
           ),
-        if (isMuted)
-          Align(
+        if (widget.isMuted)
+          const Align(
             alignment: Alignment.center,
             child: Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+          ),
+        if (!widget.isMuted)
+          const Align(
+            alignment: Alignment.center,
+            child: Icon(Icons.volume_up, color: Colors.white, size: 48.0),
           ),
       ],
     );
