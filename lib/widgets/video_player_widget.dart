@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:video_player/video_player.dart';
+import 'package:mealmate/widgets/video_overlay_widget.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
@@ -52,6 +53,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     _controller.seekTo(Duration(milliseconds: seekMilliseconds));
   }
 
+  // ... rest of the code ...
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -68,12 +71,22 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               height: 500,
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    VideoPlayer(_controller),
+                    VideoOverlayWidget(
+                      isMuted: _isMuted,
+                      position: _controller.value.position,
+                      duration: _controller.value.duration,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
