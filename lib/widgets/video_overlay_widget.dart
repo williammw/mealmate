@@ -21,18 +21,9 @@ class VideoOverlayWidget extends StatefulWidget {
 }
 
 class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
-  bool _showMuteIcon = true;
-
   @override
   void initState() {
     super.initState();
-
-    // Set up a timer to hide the mute icon after 2 seconds
-    Timer(const Duration(seconds: 2), () {
-      setState(() {
-        _showMuteIcon = false;
-      });
-    });
   }
 
   @override
@@ -46,20 +37,38 @@ class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
               padding: const EdgeInsets.only(top: 10.0),
               child: Text(
                 '${widget.position.inMinutes}:${(widget.position.inSeconds % 60).toString().padLeft(2, '0')} / ${widget.duration.inMinutes}:${(widget.duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                style: TextStyle(color: Colors.white, fontSize: 14.0),
+                style: const TextStyle(color: Colors.white, fontSize: 14.0),
               ),
             ),
           ),
         if (widget.isMuted)
-          const Align(
+          Align(
             alignment: Alignment.center,
-            child: Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  // Handle the onTap event here
+                  print('Icon tapped');
+                },
+                child: const Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+              ),
+            ),
           ),
         if (!widget.isMuted)
-          const Align(
+          Align(
             alignment: Alignment.center,
-            child: Icon(Icons.volume_up, color: Colors.white, size: 48.0),
-          ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  // Handle the onTap event here
+                  print('Icon tapped');
+                },
+                child: const Icon(Icons.volume_up, color: Colors.white, size: 48.0),
+              ),
+            ),
+          )
       ],
     );
   }

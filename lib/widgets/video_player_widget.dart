@@ -25,6 +25,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _duration = _videoPlayerController.value.duration;
         _videoPlayerController.setLooping(true);
         _videoPlayerController.play();
+        _videoPlayerController.setVolume(0.0);
         setState(() {});
       })
       ..addListener(() {

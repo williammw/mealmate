@@ -24,7 +24,7 @@ class FeedItemModel {
   static List<FeedItemModel> generateFakeData() {
     List<FeedItemModel> feedItems = [];
     // String videoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-    String videoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+    String videoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4";
     for (int i = 0; i < 10; i++) {
       feedItems.add(FeedItemModel(
         userAvatarUrl: "https://i.pravatar.cc/150?img=${i + 1}",

@@ -9,8 +9,8 @@ class FeedItem extends StatelessWidget {
   const FeedItem({Key? key, required this.feedItem}) : super(key: key);
 
   Widget _buildMediaContent() {
-    final double desiredHeight = 500;
-    final double aspectRatio = (16 / 9);
+    const double desiredHeight = 500;
+    const double aspectRatio = (16 / 9);
 
     if (feedItem.postVideoUrl.isNotEmpty && feedItem.showVideoFirst) {
       return SizedBox(
