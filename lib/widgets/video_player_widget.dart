@@ -16,6 +16,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   final _position = ValueNotifier<Duration>(Duration.zero);
   Duration? _duration;
   final _isPlaying = ValueNotifier<bool>(false);
+  final GlobalKey<VideoOverlayWidgetState> videoOverlayKey = GlobalKey();
 
   @override
   void initState() {
@@ -45,10 +46,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   void _toggleSound() {
     if (_videoPlayerController.value.volume == 0) {
+      videoOverlayKey.currentState?.showIconWithFadeOut();
       _videoPlayerController.setVolume(1.0);
     } else {
+      videoOverlayKey.currentState?.showIconWithFadeOut();
       _videoPlayerController.setVolume(0.0);
     }
+    videoOverlayKey.currentState?.hideIconWithFadeOut();
   }
 
   @override
@@ -77,6 +81,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             valueListenable: _position,
             builder: (context, position, child) {
               return VideoOverlayWidget(
+                key: videoOverlayKey,
                 position: position,
                 duration: _duration!,
                 isMuted: _videoPlayerController.value.volume == 0,

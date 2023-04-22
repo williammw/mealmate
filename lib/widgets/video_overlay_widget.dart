@@ -17,13 +17,29 @@ class VideoOverlayWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<VideoOverlayWidget> createState() => _VideoOverlayWidgetState();
+  State<VideoOverlayWidget> createState() => VideoOverlayWidgetState();
 }
 
-class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
+class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
+  bool _showIcon = true;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  void showIconWithFadeOut() {
+    setState(() {
+      _showIcon = true;
+    });
+  }
+
+  void hideIconWithFadeOut() {
+    Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _showIcon = false;
+      });
+    });
   }
 
   @override
@@ -42,33 +58,39 @@ class _VideoOverlayWidgetState extends State<VideoOverlayWidget> {
             ),
           ),
         if (widget.isMuted)
-          Align(
-            alignment: Alignment.center,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  // Handle the onTap event here
-                  print('Icon tapped');
-                },
-                child: const Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+          AnimatedOpacity(
+            opacity: _showIcon ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 300),
+            child: Align(
+              alignment: Alignment.center,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    hideIconWithFadeOut();
+                  },
+                  child: const Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+                ),
               ),
             ),
           ),
         if (!widget.isMuted)
-          Align(
-            alignment: Alignment.center,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  // Handle the onTap event here
-                  print('Icon tapped');
-                },
-                child: const Icon(Icons.volume_up, color: Colors.white, size: 48.0),
+          AnimatedOpacity(
+            opacity: _showIcon ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 300),
+            child: Align(
+              alignment: Alignment.center,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    hideIconWithFadeOut();
+                  },
+                  child: const Icon(Icons.volume_up, color: Colors.white, size: 48.0),
+                ),
               ),
             ),
-          )
+          ),
       ],
     );
   }
