@@ -48,9 +48,9 @@ class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
       children: [
         if (widget.isPlaying)
           Align(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
+              padding: const EdgeInsets.only(bottom: 10.0),
               child: Text(
                 '${widget.position.inMinutes}:${(widget.position.inSeconds % 60).toString().padLeft(2, '0')} / ${widget.duration.inMinutes}:${(widget.duration.inSeconds % 60).toString().padLeft(2, '0')}',
                 style: const TextStyle(color: Colors.white, fontSize: 14.0),
