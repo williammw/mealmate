@@ -76,7 +76,7 @@ class _FeedItemState extends State<FeedItem> {
           ),
           Positioned(
             bottom: 8,
-            left: 8,
+            left: 18,
             child: Text(
               '${_currentPage + 1}/${mediaWidgets.length}',
               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -91,7 +91,13 @@ class _FeedItemState extends State<FeedItem> {
                   backgroundImage: NetworkImage(widget.feedItem.userAvatarUrl),
                 ),
                 const SizedBox(width: 8),
-                Text(widget.feedItem.username),
+                Text(
+                  widget.feedItem.username,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
@@ -115,21 +121,37 @@ class _FeedItemState extends State<FeedItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
+                    color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(Icons.favorite_border),
+                    icon: const Icon(
+                      Icons.favorite_border,
+                      size: 32,
+                    ),
                   ),
                   IconButton(
+                    color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(Icons.comment),
+                    icon: const Icon(
+                      Icons.comment,
+                      size: 32,
+                    ),
                   ),
                   IconButton(
+                    color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(Icons.share),
+                    icon: const Icon(
+                      Icons.share,
+                      size: 32,
+                    ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.bookmark_border),
-                  ),
+                  // IconButton(
+                  //   color: Colors.white,
+                  //   onPressed: () {},
+                  //   icon: const Icon(
+                  //     Icons.bookmark_border,
+                  //     size: 32,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
