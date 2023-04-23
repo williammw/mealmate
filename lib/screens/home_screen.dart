@@ -5,7 +5,6 @@ import 'package:mealmate/screens/search_restaurant_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/widgets/custom_sliver_app_bar.dart';
-import 'package:flutter/widgets.dart';
 
 import 'feed_screen.dart';
 

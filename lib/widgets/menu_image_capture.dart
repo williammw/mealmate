@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -5,10 +7,10 @@ class MenuImageCapture extends StatefulWidget {
   const MenuImageCapture({Key? key}) : super(key: key);
 
   @override
-  _MenuImageCaptureState createState() => _MenuImageCaptureState();
+  State<MenuImageCapture> createState() => MenuImageCaptureState();
 }
 
-class _MenuImageCaptureState extends State<MenuImageCapture> {
+class MenuImageCaptureState extends State<MenuImageCapture> {
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
 

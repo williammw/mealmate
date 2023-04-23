@@ -27,6 +27,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _videoPlayerController.setLooping(true);
         _videoPlayerController.play();
         _videoPlayerController.setVolume(0.0);
+
         setState(() {});
       })
       ..addListener(() {
@@ -46,13 +47,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   void _toggleSound() {
     if (_videoPlayerController.value.volume == 0) {
-      videoOverlayKey.currentState?.showIconWithFadeOut();
       _videoPlayerController.setVolume(1.0);
     } else {
-      videoOverlayKey.currentState?.showIconWithFadeOut();
       _videoPlayerController.setVolume(0.0);
     }
-    videoOverlayKey.currentState?.hideIconWithFadeOut();
+    videoOverlayKey.currentState?.showIconWithFadeOut();
   }
 
   @override

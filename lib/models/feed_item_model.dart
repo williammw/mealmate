@@ -1,8 +1,8 @@
 class FeedItemModel {
   final String userAvatarUrl;
   final String username;
-  final String postImageUrl;
-  final String postVideoUrl;
+  final List<String> postImageUrls;
+  final List<String> postVideoUrls;
   final String description;
   final int likes;
   final int comments;
@@ -12,8 +12,8 @@ class FeedItemModel {
   FeedItemModel({
     required this.userAvatarUrl,
     required this.username,
-    required this.postImageUrl,
-    required this.postVideoUrl,
+    required this.postImageUrls,
+    required this.postVideoUrls,
     required this.description,
     required this.likes,
     required this.comments,
@@ -23,14 +23,28 @@ class FeedItemModel {
 
   static List<FeedItemModel> generateFakeData() {
     List<FeedItemModel> feedItems = [];
-    // String videoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-    String videoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4";
+    List<String> videoUrls = [
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+    ];
+
     for (int i = 0; i < 10; i++) {
       feedItems.add(FeedItemModel(
         userAvatarUrl: "https://i.pravatar.cc/150?img=${i + 1}",
         username: "Username ${i + 1}",
-        postImageUrl: "https://picsum.photos/id/${i + 10}/400/600",
-        postVideoUrl: i % 3 == 0 ? videoUrl : '',
+        postImageUrls: ["https://picsum.photos/id/${i + 10}/400/600"],
+        postVideoUrls: i % 3 == 0 ? [videoUrls[i % videoUrls.length]] : [],
         description: "Post description for post ${i + 1}",
         likes: (i + 1) * 23,
         comments: (i + 1) * 12,

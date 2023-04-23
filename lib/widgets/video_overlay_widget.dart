@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class VideoOverlayWidget extends StatefulWidget {
   final Duration position;
@@ -26,15 +27,14 @@ class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
   @override
   void initState() {
     super.initState();
+    showIconWithFadeOut();
   }
 
   void showIconWithFadeOut() {
     setState(() {
       _showIcon = true;
     });
-  }
 
-  void hideIconWithFadeOut() {
     Timer(const Duration(milliseconds: 500), () {
       setState(() {
         _showIcon = false;
@@ -57,40 +57,26 @@ class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
               ),
             ),
           ),
-        if (widget.isMuted)
-          AnimatedOpacity(
-            opacity: _showIcon ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 300),
-            child: Align(
-              alignment: Alignment.center,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    hideIconWithFadeOut();
-                  },
-                  child: const Icon(Icons.volume_off, color: Colors.white, size: 48.0),
+        AnimatedOpacity(
+          opacity: _showIcon ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 500),
+          child: Align(
+            alignment: Alignment.center,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  // Do nothing on tap, since it's handled by VideoPlayerWidget
+                },
+                child: Icon(
+                  widget.isMuted ? Icons.volume_off : Icons.volume_up,
+                  color: Colors.white,
+                  size: 48.0,
                 ),
               ),
             ),
           ),
-        if (!widget.isMuted)
-          AnimatedOpacity(
-            opacity: _showIcon ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 300),
-            child: Align(
-              alignment: Alignment.center,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    hideIconWithFadeOut();
-                  },
-                  child: const Icon(Icons.volume_up, color: Colors.white, size: 48.0),
-                ),
-              ),
-            ),
-          ),
+        ),
       ],
     );
   }
