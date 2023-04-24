@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mealmate/widgets/bottom_navigation.dart';
-import 'package:mealmate/screens/search_restaurant_screen.dart';
+import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/widgets/custom_sliver_app_bar.dart';
@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _children = [
     const FeedScreen(),
-    const SearchRestaurantScreen(),
+    const SearchRestaurantChatbotScreen(),
     const UserProfileScreen(),
     const SettingsScreen(),
   ];
@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: Scaffold(
-        body: _currentIndex == 0
+        body: _currentIndex == 0 || _currentIndex == 1
             ? NestedScrollView(
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
