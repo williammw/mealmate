@@ -64,7 +64,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         );
 
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
           alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
           child: IntrinsicWidth(
             child: isUrl
@@ -99,7 +99,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
                     },
                   )
                 : Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                     decoration: BoxDecoration(
                       color: messageColor,
                       borderRadius: isMessageRead ? messageReadBorderRadius : messageSentBorderRadius,
