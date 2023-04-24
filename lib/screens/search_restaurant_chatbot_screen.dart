@@ -15,6 +15,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   Map<String, PreviewData> datas = {};
   final List<String> _messages = [];
   final List<bool> _isUserMessage = [];
+  ScrollController _scrollController = ScrollController();
 
   void _handleSubmitted(String text) {
     if (text.trim().isEmpty) {
@@ -38,8 +39,17 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     });
   }
 
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   Widget _buildMessageList() {
     return ListView.builder(
+      controller: _scrollController,
       itemCount: _messages.length,
       itemBuilder: (BuildContext context, int index) {
         final bool isUserMessage = _isUserMessage[index];
@@ -147,7 +157,10 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: IconButton(
               icon: const Icon(Icons.send),
-              onPressed: () => _handleSubmitted(_textController.text),
+              onPressed: () => () {
+                _handleSubmitted(_textController.text);
+                _scrollToBottom();
+              }(),
             ),
           ),
         ],
