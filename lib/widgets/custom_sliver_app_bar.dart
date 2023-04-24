@@ -94,7 +94,7 @@ class CustomSliverAppBar extends StatelessWidget {
         ),
       ),
       forceElevated: true,
-      // pinned: false,
+      pinned: false,
       floating: true,
     );
   }

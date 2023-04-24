@@ -16,6 +16,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   final List<String> _messages = [];
   final List<bool> _isUserMessage = [];
   ScrollController _scrollController = ScrollController();
+  static const double appBarHeight = 56.0;
 
   void _handleSubmitted(String text) {
     if (text.trim().isEmpty) {
@@ -170,22 +171,17 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Search Restaurants'),
-      // ),
-      body: Column(
-        children: [
-          Flexible(
-            child: _buildMessageList(),
-          ),
-          const Divider(height: 1.0),
-          Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _buildTextComposer(),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Flexible(
+          child: _buildMessageList(),
+        ),
+        const Divider(height: 1.0),
+        Container(
+          decoration: BoxDecoration(color: Theme.of(context).cardColor),
+          child: _buildTextComposer(),
+        ),
+      ],
     );
   }
 }
