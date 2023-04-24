@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mealmate/screens/home_screen.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
@@ -7,6 +9,8 @@ import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/screens/conversations_screen.dart';
 
 void main() {
+  Platform.environment['CG_NUMERICS_SHOW_BACKTRACE'] = '1';
+
   runApp(const MealMateApp());
 }
 
