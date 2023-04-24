@@ -99,3 +99,7 @@ class CustomSliverAppBar extends StatelessWidget {
     );
   }
 }
+
+
+
+my requirenment is, there would be a long List to scroll,when scroll down Appbar hide, when i scroll up, i dont want scroll to the top then show the Appbar, i want when i scrollup the appbar will show like instgram...do you understand my requirenmnet?
