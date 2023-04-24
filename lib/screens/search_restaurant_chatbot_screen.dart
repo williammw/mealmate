@@ -125,6 +125,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
               controller: _textController,
               minLines: 1,
               maxLines: 4,
+              textInputAction: TextInputAction.done,
               style: const TextStyle(
                 height: 1.5,
               ), // Adjust the height of the TextField by changing the value

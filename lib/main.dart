@@ -4,6 +4,7 @@ import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/restaurant_details_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
+import 'package:mealmate/screens/conversations_screen.dart';
 
 void main() {
   runApp(const MealMateApp());

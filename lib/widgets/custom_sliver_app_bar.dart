@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
   final String title;
+  final bool showChatIcon;
 
-  const CustomSliverAppBar({required this.title});
+  const CustomSliverAppBar({required this.title, this.showChatIcon = false});
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,15 @@ class CustomSliverAppBar extends StatelessWidget {
           icon: const Icon(EvaIcons.menu2Outline),
           onPressed: () {},
         ),
+        if (showChatIcon)
+          IconButton(
+            // Add this IconButton
+            icon: const Icon(EvaIcons.messageCircleOutline),
+            onPressed: () {
+              Logger().d("click click");
+              Scaffold.of(context).openEndDrawer();
+            },
+          ),
       ],
       backgroundColor: Colors.blue,
       flexibleSpace: Container(
