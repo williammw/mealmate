@@ -104,7 +104,7 @@ class _FeedItemState extends State<FeedItem> {
           Positioned(
             top: 52,
             left: 24,
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               child: Text(
                 widget.feedItem.description,
