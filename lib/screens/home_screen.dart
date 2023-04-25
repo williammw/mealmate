@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         IconButton(
                           icon: const Icon(EvaIcons.menu2Outline),
                           onPressed: () {
-                            _scaffoldKey.currentState?.openEndDrawer();
+                            // R_scaffoldKey.currentState?.openEndDrawer();
                           },
                         ),
                         IconButton(
