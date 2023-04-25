@@ -4,7 +4,7 @@ class RestaurantDetailsScreen extends StatefulWidget {
   const RestaurantDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  _RestaurantDetailsScreenState createState() => _RestaurantDetailsScreenState();
+  State<RestaurantDetailsScreen> createState() => _RestaurantDetailsScreenState();
 }
 
 class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
@@ -18,24 +18,24 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: const [
             // TODO: Add restaurant image here
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Restaurant Name',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 'Address: 123 Main St, City, Country',
                 style: TextStyle(fontSize: 16),
               ),
             ),
-            const SizedBox(height: 16),
-            const Padding(
+            SizedBox(height: 16),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 'Menu',

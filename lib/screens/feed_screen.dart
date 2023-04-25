@@ -7,13 +7,11 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: FeedItemModel.generateFakeData().length,
-        itemBuilder: (BuildContext context, int index) {
-          return FeedItem(feedItem: FeedItemModel.generateFakeData()[index]);
-        },
-      ),
+    return ListView.builder(
+      itemCount: FeedItemModel.generateFakeData().length,
+      itemBuilder: (BuildContext context, int index) {
+        return FeedItem(feedItem: FeedItemModel.generateFakeData()[index]);
+      },
     );
   }
 }

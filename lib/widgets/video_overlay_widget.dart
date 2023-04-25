@@ -23,6 +23,7 @@ class VideoOverlayWidget extends StatefulWidget {
 
 class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
   bool _showIcon = true;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -31,15 +32,26 @@ class VideoOverlayWidgetState extends State<VideoOverlayWidget> {
   }
 
   void showIconWithFadeOut() {
+    if (!mounted) return;
+
     setState(() {
       _showIcon = true;
     });
 
-    Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        _showIcon = false;
-      });
+    _timer?.cancel();
+    _timer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _showIcon = false;
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

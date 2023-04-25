@@ -28,6 +28,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     });
     _textController.clear();
     _simulateBotResponse(text);
+    _scrollToBottom();
   }
 
   void _simulateBotResponse(String userMessage) {
@@ -41,86 +42,97 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   }
 
   void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   Widget _buildMessageList() {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: _messages.length,
-      itemBuilder: (BuildContext context, int index) {
-        final bool isUserMessage = _isUserMessage[index];
-        final String message = _messages[index];
-        final bool isUrl = Uri.tryParse(message)?.hasAbsolutePath ?? false;
-        final bool isLatestMessage = index == _messages.length - 1;
-        final bool isMessageRead = isLatestMessage && !isUserMessage;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return ListView.builder(
+          controller: _scrollController,
+          itemCount: _messages.length,
+          itemBuilder: (BuildContext context, int index) {
+            final bool isUserMessage = _isUserMessage[index];
+            final String message = _messages[index];
+            final bool isUrl = Uri.tryParse(message)?.hasAbsolutePath ?? false;
+            final bool isLatestMessage = index == _messages.length - 1;
+            final bool isMessageRead = isLatestMessage && !isUserMessage;
 
-        Color? messageColor = isUserMessage ? Colors.blueAccent : Colors.grey[300];
-        Color textColor = isUserMessage ? Colors.white : Colors.black;
+            Color? messageColor = isUserMessage ? Colors.blueAccent : Colors.grey[300];
+            Color textColor = isUserMessage ? Colors.white : Colors.black;
 
-        BorderRadius borderRadius = BorderRadius.circular(12.0);
-        BorderRadius messageSentBorderRadius = const BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-          bottomLeft: Radius.circular(12),
-        );
-        BorderRadius messageReadBorderRadius = const BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        );
+            BorderRadius borderRadius = BorderRadius.circular(12.0);
+            BorderRadius messageSentBorderRadius = const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+            );
+            BorderRadius messageReadBorderRadius = const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            );
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-          alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
-          child: IntrinsicWidth(
-            child: isUrl
-                ? Link(
-                    uri: Uri.parse(message),
-                    target: LinkTarget.blank,
-                    builder: (BuildContext context, FollowLink? followLink) {
-                      return GestureDetector(
-                        onTap: followLink,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: messageColor,
-                            borderRadius: isMessageRead ? messageReadBorderRadius : messageSentBorderRadius,
-                          ),
-                          child: LinkPreview(
-                            enableAnimation: true,
-                            onPreviewDataFetched: (data) {
-                              setState(() {
-                                datas = {
-                                  ...datas,
-                                  message: data,
-                                };
-                              });
-                            },
-                            previewData: datas[message],
-                            text: message,
-                            width: MediaQuery.of(context).size.width * 0.9,
-                          ),
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+              child: IntrinsicWidth(
+                child: isUrl
+                    ? Link(
+                        uri: Uri.parse(message),
+                        target: LinkTarget.blank,
+                        builder: (BuildContext context, FollowLink? followLink) {
+                          return GestureDetector(
+                            onTap: followLink,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                              decoration: BoxDecoration(
+                                color: messageColor,
+                                borderRadius: isMessageRead ? messageReadBorderRadius : messageSentBorderRadius,
+                              ),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: constraints.maxWidth * 0.9,
+                                ),
+                                child: LinkPreview(
+                                  enableAnimation: true,
+                                  onPreviewDataFetched: (data) {
+                                    setState(() {
+                                      datas = {
+                                        ...datas,
+                                        message: data,
+                                      };
+                                    });
+                                  },
+                                  previewData: datas[message],
+                                  text: message,
+                                  width: MediaQuery.of(context).size.width * 0.9,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                        decoration: BoxDecoration(
+                          color: messageColor,
+                          borderRadius: isMessageRead ? messageReadBorderRadius : messageSentBorderRadius,
                         ),
-                      );
-                    },
-                  )
-                : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: messageColor,
-                      borderRadius: isMessageRead ? messageReadBorderRadius : messageSentBorderRadius,
-                    ),
-                    child: Text(
-                      message,
-                      style: TextStyle(color: textColor),
-                    ),
-                  ),
-          ),
+                        child: Text(
+                          message,
+                          style: TextStyle(color: textColor),
+                        ),
+                      ),
+              ),
+            );
+          },
         );
       },
     );
@@ -160,7 +172,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
               icon: const Icon(Icons.send),
               onPressed: () => () {
                 _handleSubmitted(_textController.text);
-                _scrollToBottom();
+                // _scrollToBottom();
               }(),
             ),
           ),
@@ -171,17 +183,19 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Flexible(
-          child: _buildMessageList(),
-        ),
-        const Divider(height: 1.0),
-        Container(
-          decoration: BoxDecoration(color: Theme.of(context).cardColor),
-          child: _buildTextComposer(),
-        ),
-      ],
+    return SafeArea(
+      child: Column(
+        children: [
+          Flexible(
+            child: _buildMessageList(),
+          ),
+          const Divider(height: 1.0),
+          Container(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: _buildTextComposer(),
+          ),
+        ],
+      ),
     );
   }
 }

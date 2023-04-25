@@ -1,14 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
   final String title;
   final bool showChatIcon;
 
-  const CustomSliverAppBar({required this.title, this.showChatIcon = false});
+  const CustomSliverAppBar({super.key, required this.title, this.showChatIcon = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +17,21 @@ class CustomSliverAppBar extends StatelessWidget {
           // Implement dropdown menu functionality here
           showMenu(
             context: context,
-            position: RelativeRect.fromLTRB(0, 100, 0, 0),
+            position: const RelativeRect.fromLTRB(0, 100, 0, 0),
             items: [
-              PopupMenuItem(
-                child: const Text(
+              const PopupMenuItem(
+                value: 'following',
+                child: Text(
                   'Following',
                   style: TextStyle(color: Colors.black),
                 ),
-                value: 'following',
               ),
-              PopupMenuItem(
-                child: const Text(
+              const PopupMenuItem(
+                value: 'favorites',
+                child: Text(
                   'Favorites',
                   style: TextStyle(color: Colors.black),
                 ),
-                value: 'favorites',
               ),
             ],
             elevation: 8.0,

@@ -9,7 +9,7 @@ import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/screens/conversations_screen.dart';
 
 void main() {
-  Platform.environment['CG_NUMERICS_SHOW_BACKTRACE'] = '1';
+  // Platform.environment['CG_NUMERICS_SHOW_BACKTRACE'] = '1';
 
   runApp(const MealMateApp());
 }
