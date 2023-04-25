@@ -45,7 +45,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     }
@@ -127,7 +127,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
                         ),
                         child: Text(
                           message,
-                          style: TextStyle(color: textColor),
+                          style: TextStyle(color: textColor, fontSize: 16.0),
                         ),
                       ),
               ),
@@ -148,9 +148,10 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
               controller: _textController,
               minLines: 1,
               maxLines: 4,
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.newline,
               style: const TextStyle(
                 height: 1.5,
+                fontSize: 14.0,
               ), // Adjust the height of the TextField by changing the value
               decoration: InputDecoration(
                 hintText: 'Ask a question',
@@ -184,17 +185,20 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          Flexible(
-            child: _buildMessageList(),
-          ),
-          const Divider(height: 1.0),
-          Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _buildTextComposer(),
-          ),
-        ],
+      child: GestureDetector(
+        onTap: () => {FocusScope.of(context).unfocus()},
+        child: Column(
+          children: [
+            Flexible(
+              child: _buildMessageList(),
+            ),
+            const Divider(height: 1.0),
+            Container(
+              decoration: BoxDecoration(color: Theme.of(context).cardColor),
+              child: _buildTextComposer(),
+            ),
+          ],
+        ),
       ),
     );
   }

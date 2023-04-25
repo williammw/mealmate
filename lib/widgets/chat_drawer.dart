@@ -17,7 +17,7 @@ class ChatDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          Container(
+          const SizedBox(
             height: 120.0,
             child: DrawerHeader(
               decoration: BoxDecoration(

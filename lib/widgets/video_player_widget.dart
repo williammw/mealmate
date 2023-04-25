@@ -5,10 +5,10 @@ import 'package:mealmate/widgets/video_overlay_widget.dart';
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
 
-  VideoPlayerWidget({Key? key, required this.url}) : super(key: key);
+  const VideoPlayerWidget({Key? key, required this.url}) : super(key: key);
 
   @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
+  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
@@ -74,6 +74,26 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 height: _videoPlayerController.value.size.height,
                 child: VideoPlayer(_videoPlayerController),
               ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            child: ValueListenableBuilder<Duration>(
+              valueListenable: _position,
+              builder: (context, position, child) {
+                return Slider(
+                  activeColor: Colors.white,
+                  inactiveColor: Colors.white.withOpacity(0.5),
+                  value: position.inMilliseconds.clamp(0, _duration!.inMilliseconds).toDouble(),
+                  min: 0.0,
+                  max: _duration!.inMilliseconds.toDouble(),
+                  onChanged: (double value) {
+                    _videoPlayerController.seekTo(Duration(milliseconds: value.toInt()));
+                  },
+                );
+              },
             ),
           ),
           ValueListenableBuilder<Duration>(
