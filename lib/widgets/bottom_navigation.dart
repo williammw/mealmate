@@ -10,6 +10,8 @@ class CustomBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       showSelectedLabels: false,
+      selectedLabelStyle: const TextStyle(fontSize: 12.0),
+      unselectedLabelStyle: const TextStyle(fontSize: 12.0),
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor: Colors.blue,
