@@ -83,8 +83,8 @@ class _FeedItemState extends State<FeedItem> {
             ),
           ),
           Positioned(
-            top: 8,
-            left: 24,
+            top: 10,
+            left: 10,
             child: Row(
               children: [
                 CircleAvatar(
@@ -103,7 +103,7 @@ class _FeedItemState extends State<FeedItem> {
           ),
           Positioned(
             top: 52,
-            left: 24,
+            left: 10,
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               child: Text(
@@ -164,7 +164,7 @@ class _FeedItemState extends State<FeedItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 14.0),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

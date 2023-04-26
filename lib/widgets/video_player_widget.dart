@@ -2,6 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:mealmate/widgets/video_overlay_widget.dart';
 
+class AlmostRectangularSliderTrackShape extends SliderTrackShape {
+  final double height;
+
+  AlmostRectangularSliderTrackShape({required this.height});
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required TextDirection textDirection,
+    required Offset thumbCenter,
+    Offset? secondaryOffset,
+    bool isDiscrete = false,
+    bool isEnabled = false,
+  }) {
+    final Canvas canvas = context.canvas;
+    final Paint activePaint = Paint()..color = sliderTheme.activeTrackColor!;
+    final Paint inactivePaint = Paint()..color = sliderTheme.inactiveTrackColor!;
+    final double trackWidth = parentBox.size.width;
+    final double trackTop = offset.dy + (parentBox.size.height - height) / 2;
+
+    final Rect activeRect = Rect.fromLTWH(
+      offset.dx,
+      trackTop,
+      thumbCenter.dx - offset.dx,
+      height,
+    );
+
+    final Rect inactiveRect = Rect.fromLTWH(
+      thumbCenter.dx,
+      trackTop,
+      trackWidth - (thumbCenter.dx - offset.dx),
+      height,
+    );
+
+    canvas.drawRRect(RRect.fromRectAndRadius(activeRect, Radius.circular(0.5)), activePaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(inactiveRect, Radius.circular(0.5)), inactivePaint);
+  }
+
+  @override
+  Rect getPreferredRect({
+    required RenderBox parentBox,
+    Offset offset = Offset.zero,
+    required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final double thumbWidth = sliderTheme.thumbShape!.getPreferredSize(isEnabled, isDiscrete).width;
+    final double trackLeft = offset.dx + thumbWidth / 2;
+    final double trackTop = offset.dy + (parentBox.size.height - height) / 2;
+    final double trackWidth = parentBox.size.width - thumbWidth;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, height);
+  }
+}
+
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
 
@@ -83,15 +141,23 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             child: ValueListenableBuilder<Duration>(
               valueListenable: _position,
               builder: (context, position, child) {
-                return Slider(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white.withOpacity(0.5),
-                  value: position.inMilliseconds.clamp(0, _duration!.inMilliseconds).toDouble(),
-                  min: 0.0,
-                  max: _duration!.inMilliseconds.toDouble(),
-                  onChanged: (double value) {
-                    _videoPlayerController.seekTo(Duration(milliseconds: value.toInt()));
-                  },
+                return SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 4.0,
+                    trackShape: AlmostRectangularSliderTrackShape(height: 4.0),
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 0.0), // Set radius to 0.0 to hide thumb
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
+                  ),
+                  child: Slider(
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white.withOpacity(0.5),
+                    value: position.inMilliseconds.clamp(0, _duration!.inMilliseconds).toDouble(),
+                    min: 0.0,
+                    max: _duration!.inMilliseconds.toDouble(),
+                    onChanged: (double value) {
+                      _videoPlayerController.seekTo(Duration(milliseconds: value.toInt()));
+                    },
+                  ),
                 );
               },
             ),
