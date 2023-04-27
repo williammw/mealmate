@@ -47,6 +47,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       }),
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': 'mj-JNOG*&FT&3fijoognu408978J*I',
       },
     );
 
