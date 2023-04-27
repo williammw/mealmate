@@ -6,6 +6,8 @@ import 'package:url_launcher/link.dart';
 import 'package:dart_openai/openai.dart';
 import 'dart:async';
 import 'package:mealmate/env/env.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SearchRestaurantChatbotScreen extends StatefulWidget {
   const SearchRestaurantChatbotScreen({Key? key}) : super(key: key);
@@ -37,33 +39,35 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       _isLoading = true; // Start showing the loading indicator
     });
 
-    final prompt = {
-      'en':
-          "I am an AI chatbot designed to help users read restaurant menus and create personalized menu suggestions in English. I can provide recommendations on what to order, how to eat specific dishes, and cater to individual dietary preferences and restrictions.",
-      'zh-cn': "我是一个AI聊天机器人，设计用于帮助用户阅读中文（中国）餐厅菜单并创建个性化菜单建议。我可以提供有关订购什么、如何品尝特定菜肴以及满足个人饮食偏好和限制的建议。",
-      'zh-tw': "我是一個AI聊天機器人，設計用於幫助用戶閱讀中文（台灣）餐廳菜單並創建個性化菜單建議。我可以提供有關訂購什麼、如何品嚐特定菜餚以及滿足個人飲食偏好和限制的建議。",
-      'zh-hk': "我係一個AI嘅聊天機械人，設計用嚟幫助用戶閱讀粵語餐廳菜單同創建個性化嘅菜單建議。我可以提供點單、食咩同適應個人飲食偏好同限制方面嘅建議。",
-      'ja': "私は、英語でレストランのメニューを読んで、ユーザー向けのパーソナライズされたメニュー提案を作成するように設計されたAIチャットボットです。注文すべきものや特定の料理の食べ方、個々の食事の好みや制限に合わせる方法などの提案を提供できます。",
-    };
-
-    final languagePrompt = prompt[languageCode] ?? prompt['en'];
-    final fullPrompt = "$languagePrompt\n\nUser: $message";
-
-    final completion = await OpenAI.instance.completion.create(
-      model: "text-davinci-003",
-      prompt: fullPrompt,
-      maxTokens: 1000,
-      temperature: 0.8,
+    final response = await http.post(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/send_message'),
+      body: json.encode({
+        'message': message,
+        'language_code': languageCode,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
 
-    setState(() {
-      _response = completion.choices[0].text.trim();
-      Logger().d(_response);
-      Logger().e(completion);
-      _messages.add(_response);
-      _isUserMessage.add(false);
-      _isLoading = false; // Stop showing the loading indicator
-    });
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final aiResponse = jsonResponse['response'];
+
+      setState(() {
+        _response = aiResponse;
+        Logger().d(_response);
+        Logger().e(jsonResponse);
+        _messages.add(_response);
+        _isUserMessage.add(false);
+        _isLoading = false; // Stop showing the loading indicator
+      });
+    } else {
+      setState(() {
+        _isLoading = false; // Stop showing the loading indicator
+      });
+      throw Exception('Failed to load AI response');
+    }
   }
 
   DropdownButton<String> _buildLanguageDropdown() {
