@@ -247,7 +247,11 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isLoading
-                ? CircularProgressIndicator() // Show the loading indicator when waiting for a response
+                ? Container(
+                    width: 20.0,
+                    height: 20.0,
+                    child: const CircularProgressIndicator(),
+                  ) // Show the loading indicator when waiting for a response
                 : IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: () => () {
