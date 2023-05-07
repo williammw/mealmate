@@ -47,7 +47,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       }),
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': 'mj-JNOG*&FT&3fijoognu408978J*I',
+        // 'X-API-Key': 'mj-JNOG*&FT&3fijoognu408978J*I',
       },
     );
 
@@ -229,16 +229,23 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
               style: const TextStyle(
                 height: 1.5,
                 fontSize: 14.0,
-              ), // Adjust the height of the TextField by changing the value
+              ),
               decoration: InputDecoration(
                 hintText: 'Ask a question',
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15), // Adjust the padding inside the TextField
-                border: InputBorder.none, // Remove the border
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0), // Change the value to adjust the roundness of the edges
-                  borderSide: BorderSide.none, // Remove the border
+                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                  borderSide: BorderSide.none,
                 ),
-                fillColor: Colors.grey[200], // Set a light background color
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                  borderSide: BorderSide.none,
+                ),
+                fillColor: Colors.grey[200],
                 filled: true,
                 isDense: true,
               ),

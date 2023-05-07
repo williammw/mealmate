@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "770218009343",
+    "project_id": "mealmate-b3b1e",
+    "storage_bucket": "mealmate-b3b1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770218009343:android:d1066e85afa715e00562ca",
+        "android_client_info": {
+          "package_name": "com.emf.mealmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770218009343-3u8vmkd070281rtrt84qpo54nc66mqj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPfhMywXi9VPlB129-8RCS-GkawYMpkho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770218009343-3u8vmkd070281rtrt84qpo54nc66mqj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "770218009343-nhr06i2tavh4ecoksok62egqam5eq5ns.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.emf.mealmate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

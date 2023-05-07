@@ -7,6 +7,7 @@ import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/widgets/chat_drawer.dart';
 
+import 'chat_list_screen.dart';
 import 'feed_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _children = [
     const FeedScreen(),
-    const SearchRestaurantChatbotScreen(),
+    const ChatListScreen(),
     const UserProfileScreen(),
     const SettingsScreen(),
   ];

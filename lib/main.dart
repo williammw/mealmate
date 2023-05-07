@@ -1,16 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:mealmate/screens/home_screen.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/restaurant_details_screen.dart';
+import 'package:mealmate/screens/signup_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/screens/conversations_screen.dart';
+import 'package:mealmate/screens/login_screen.dart';
 
 void main() {
-  // Platform.environment['CG_NUMERICS_SHOW_BACKTRACE'] = '1';
-
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MealMateApp());
 }
 
@@ -27,12 +29,50 @@ class MealMateApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomeScreen(),
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => LoginScreen(),
+        '/signup': (context) => SignupScreen(),
+        '/home': (context) => const HomeScreen(),
         '/search_restaurant': (context) => const SearchRestaurantChatbotScreen(),
         '/restaurant_details': (context) => const RestaurantDetailsScreen(),
         '/user_profile': (context) => const UserProfileScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    const storage = FlutterSecureStorage();
+    final authToken = await storage.read(key: 'authToken'); // Changed the key here
+    Logger().d("_checkLoginStatus authToken ${storage}");
+    if (authToken == null || authToken == 'YOUR_AUTH_TOKEN') {
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

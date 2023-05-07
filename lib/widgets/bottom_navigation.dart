@@ -22,8 +22,8 @@ class CustomBottomNavigation extends StatelessWidget {
           label: 'Feed',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
+          icon: Icon(Icons.chat_bubble_outline),
+          label: 'Chat List',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
