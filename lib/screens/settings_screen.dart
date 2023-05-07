@@ -1,50 +1,42 @@
 import 'package:flutter/material.dart';
+import '../auth.dart'; // Make sure this import points to the correct location of the 'auth.dart' file.
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
+  void _logout(BuildContext context) async {
+    final storage = FlutterSecureStorage();
+    String? idToken = await storage.read(key: 'authToken');
 
-class _SettingsScreenState extends State<SettingsScreen> {
+    if (idToken != null) {
+      final auth = Auth();
+      await auth.logout(); // Removed the check for logoutSuccessful
+
+      // Remove the authToken from secure storage
+      await storage.delete(key: 'authToken');
+      // Navigate to the login screen
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    } else {
+      // Show an error message
+      print('Logout failed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(
-      //   title: const Text('Settings'),
-      //   backgroundColor: Theme.of(context).primaryColor,
+      //   title: Text('Settings'),
       // ),
-      body: SingleChildScrollView(
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Preferences',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+            ElevatedButton(
+              onPressed: () => _logout(context),
+              child: const Text('Logout'),
             ),
-            // TODO: Add user preferences settings here
-
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Language',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-            // TODO: Add language settings here
-
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'About',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-            // TODO: Add information about the app and its developers
           ],
         ),
       ),

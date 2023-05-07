@@ -5,7 +5,9 @@ import 'package:logger/logger.dart';
 import 'package:mealmate/screens/home_screen.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/restaurant_details_screen.dart';
+import 'package:mealmate/screens/signup_birthdate_screen.dart';
 import 'package:mealmate/screens/signup_screen.dart';
+import 'package:mealmate/screens/signup_securitycode_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/screens/conversations_screen.dart';
@@ -32,6 +34,8 @@ class MealMateApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
+        '/signup_birthdate': (context) => SignupBirthdateScreen(),
+        '/signup_securitycode': (context) => SignupSecurityCodeScreen(),
         '/home': (context) => const HomeScreen(),
         '/search_restaurant': (context) => const SearchRestaurantChatbotScreen(),
         '/restaurant_details': (context) => const RestaurantDetailsScreen(),
@@ -60,10 +64,10 @@ class _SplashScreenState extends State<SplashScreen> {
     const storage = FlutterSecureStorage();
     final authToken = await storage.read(key: 'authToken'); // Changed the key here
     Logger().d("_checkLoginStatus authToken ${storage}");
-    if (authToken == null || authToken == 'YOUR_AUTH_TOKEN') {
+    if (authToken == null) {
       Navigator.pushReplacementNamed(context, '/login');
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
