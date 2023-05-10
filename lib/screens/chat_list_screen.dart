@@ -51,7 +51,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(snapshot.data![index]['title']),
+                  title: Text(snapshot.data![index]['title'] ?? 'Untitled Chat'),
                   onTap: () {
                     Navigator.pushNamed(
                       context,

@@ -8,6 +8,8 @@ import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/widgets/chat_drawer.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../api.dart';
+import '../auth.dart';
 import '../models/chat.dart';
 import 'chat_list_screen.dart';
 import 'feed_screen.dart';
@@ -22,38 +24,50 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  int _currentScreen = 0;
 
   final List<Widget> _children = [
     const FeedScreen(),
     const ChatListScreen(),
     const UserProfileScreen(),
     const SettingsScreen(),
+    // SearchRestaurantChatbotScreen(
+    //   chatId: '', // Add the correct chatId here
+    //   onBack: () {
+    //     setState(() {
+    //       _currentScreen = 1; // Show the ChatListScreen when the back button is pressed
+    //     });
+    //   },
+    // ),
   ];
 
   void _onTabChanged(int index) {
     setState(() {
       _currentIndex = index;
+      _currentScreen = index; // Add this line
     });
   }
 
-  Future<Chat?> createNewChat() async {
-    const String apiUrl = 'https://starfish-app-rk6pn.ondigitalocean.app/create_new_chat';
+  @override
+  void initState() {
+    super.initState();
+    _currentScreen = _currentIndex;
+  }
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Replace with the actual data you want to send to the server
-      body: jsonEncode({"key": "value"}),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      return Chat.fromJson(jsonResponse['chat']);
+  Future<void> _createNewChatAndNavigate() async {
+    String? userId = await Auth().getUserId();
+    if (userId != null) {
+      try {
+        final result = await Api.createNewChat(userId);
+        String chatId = result['chat']['id'];
+        setState(() {
+          _currentScreen = 5; // Show the SearchRestaurantChatbotScreen
+        });
+      } catch (e) {
+        print('Error creating a new chat: $e');
+      }
     } else {
-      print("Failed to create new chat");
-      return null;
+      print('User is not logged in');
     }
   }
 
@@ -143,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.add),
-                          onPressed: createNewChat,
+                          onPressed: _createNewChatAndNavigate,
                         ),
                       ]
                     : [

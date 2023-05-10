@@ -9,8 +9,11 @@ import 'package:mealmate/env/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../auth.dart';
+
 class SearchRestaurantChatbotScreen extends StatefulWidget {
-  const SearchRestaurantChatbotScreen({Key? key}) : super(key: key);
+  final String chatId;
+  const SearchRestaurantChatbotScreen({Key? key, required this.chatId, required Null Function() onBack}) : super(key: key);
 
   @override
   State<SearchRestaurantChatbotScreen> createState() => _SearchRestaurantChatbotScreenState();
@@ -19,6 +22,7 @@ class SearchRestaurantChatbotScreen extends StatefulWidget {
 class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotScreen> {
   final TextEditingController _textController = TextEditingController();
   Map<String, PreviewData> datas = {};
+  // Map<String, String> _headers = {'Content-Type': 'application/json'};
   final List<String> _messages = [];
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
@@ -31,7 +35,17 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   void initState() {
     super.initState();
     OpenAI.apiKey = Env.apiKey;
+    // _initializeHeaders();
   }
+
+  // Future<void> _initializeHeaders() async {
+  //   String? token = await Auth().getToken();
+  //   if (token != null) {
+  //     setState(() {
+  //       _headers['Authorization'] = 'Bearer $token';
+  //     });
+  //   }
+  // }
 
   Future<void> _sendMessage(String message, String languageCode) async {
     setState(() {
@@ -70,21 +84,29 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     }
   }
 
-  DropdownButton<String> _buildLanguageDropdown() {
-    return DropdownButton<String>(
-      value: _currentLanguage,
-      icon: const Icon(Icons.arrow_drop_down),
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          _changeLanguage(newValue);
-        }
-      },
-      items: <String>['en', 'zh-cn', 'zh-tw', 'zh-hk', 'ja'].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+  Material _buildLanguageDropdown() {
+    return Material(
+      child: DropdownButton<String>(
+        value: _currentLanguage,
+        icon: const Icon(Icons.arrow_drop_down),
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            _changeLanguage(newValue);
+          }
+        },
+        items: <Map<String, String>>[
+          {'code': 'en', 'name': 'English'},
+          {'code': 'zh-cn', 'name': '简体中文'},
+          {'code': 'zh-tw', 'name': '繁體中文'},
+          {'code': 'zh-hk', 'name': '繁體中文 (香港)'},
+          {'code': 'ja', 'name': '日本語'},
+        ].map<DropdownMenuItem<String>>((Map<String, String> value) {
+          return DropdownMenuItem<String>(
+            value: value['code']!,
+            child: Text(value['name']!),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -220,33 +242,37 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       child: Row(
         children: [
           Flexible(
-            child: TextField(
-              controller: _textController,
-              minLines: 1,
-              maxLines: 4,
-              textInputAction: TextInputAction.newline,
-              style: const TextStyle(
-                height: 1.5,
-                fontSize: 14.0,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Ask a question',
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: BorderSide.none,
+            child: Material(
+              // Wrap TextField with Material
+              type: MaterialType.transparency,
+              child: TextField(
+                controller: _textController,
+                minLines: 1,
+                maxLines: 4,
+                textInputAction: TextInputAction.newline,
+                style: const TextStyle(
+                  height: 1.5,
+                  fontSize: 14.0,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: BorderSide.none,
+                decoration: InputDecoration(
+                  hintText: 'Ask a question',
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  fillColor: Colors.grey[200],
+                  filled: true,
+                  isDense: true,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: BorderSide.none,
-                ),
-                fillColor: Colors.grey[200],
-                filled: true,
-                isDense: true,
               ),
             ),
           ),
@@ -257,12 +283,16 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
                     width: 20.0,
                     height: 20.0,
                     child: const CircularProgressIndicator(),
-                  ) // Show the loading indicator when waiting for a response
-                : IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () => () {
-                      _handleSubmitted(_textController.text);
-                    }(),
+                  )
+                : Material(
+                    // Wrap IconButton with Material
+                    type: MaterialType.transparency,
+                    child: IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () => () {
+                        _handleSubmitted(_textController.text);
+                      }(),
+                    ),
                   ),
           ),
         ],

@@ -46,6 +46,20 @@ class Api {
     }
   }
 
+  static Future<Map<String, dynamic>> createNewChat(String userId) async {
+    final response = await http.post(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/create_new_chat'),
+      body: jsonEncode({'user_id': userId}),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to create a new chat');
+    }
+  }
+
   // Save user data using the API
   static Future<void> saveUserData(String email, String securityCode) async {
     final response = await http.post(
