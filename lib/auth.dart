@@ -28,6 +28,10 @@ class Auth {
     return false;
   }
 
+  Future<String?> getUserId() async {
+    return await storage.read(key: 'authToken');
+  }
+
   Future<bool> signup(String emailOrPhone, String password, String displayName, String fullName, DateTime dob, int peopleDining) async {
     print("signUP!!");
     try {

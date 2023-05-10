@@ -36,17 +36,13 @@ class Api {
   }
 
   static Future<List<dynamic>> getChats(String userId) async {
-    String apiUrl = 'https://starfish-app-rk6pn.ondigitalocean.app';
-    final response = await http.post(
-      Uri.parse('$apiUrl/get_chats'),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'user_id': userId},
+    final response = await http.get(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_chats?user_id=$userId'),
     );
-
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(response.body)['chats'];
     } else {
-      throw Exception('Failed to get chats');
+      throw Exception('Failed to load chats');
     }
   }
 

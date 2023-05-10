@@ -20,16 +20,21 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   Future<List<dynamic>> _getChats() async {
-    String userId = await Auth().getUserId();
-    return await Api.getChats(userId);
+    String? userId = await Auth().getUserId();
+    if (userId != null) {
+      return await Api.getChats(userId);
+    } else {
+      // Handle the case where the userId is null (e.g., user is not logged in)
+      return [];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Chats'),
+      // ),
       body: FutureBuilder<List<dynamic>>(
         future: _chats,
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {

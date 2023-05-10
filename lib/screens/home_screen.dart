@@ -6,7 +6,9 @@ import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/widgets/chat_drawer.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../models/chat.dart';
 import 'chat_list_screen.dart';
 import 'feed_screen.dart';
 
@@ -32,6 +34,27 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  Future<Chat?> createNewChat() async {
+    const String apiUrl = 'https://starfish-app-rk6pn.ondigitalocean.app/create_new_chat';
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // Replace with the actual data you want to send to the server
+      body: jsonEncode({"key": "value"}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return Chat.fromJson(jsonResponse['chat']);
+    } else {
+      print("Failed to create new chat");
+      return null;
+    }
   }
 
   @override
@@ -119,10 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         IconButton(
-                          icon: const Icon(Icons.chat),
-                          onPressed: () {
-                            _scaffoldKey.currentState?.openEndDrawer();
-                          },
+                          icon: const Icon(Icons.add),
+                          onPressed: createNewChat,
                         ),
                       ]
                     : [
