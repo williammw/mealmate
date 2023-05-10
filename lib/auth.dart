@@ -28,21 +28,38 @@ class Auth {
     return false;
   }
 
-  Future<bool> signup(String email, String password, String displayName) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/signup'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password, 'displayName': displayName}),
-    );
+  Future<bool> signup(String emailOrPhone, String password, String displayName, String fullName, DateTime dob, int peopleDining) async {
+    print("signUP!!");
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/signup'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(
+          {
+            'email_or_phone': emailOrPhone,
+            'full_name': fullName,
+            'username': displayName,
+            'password': password,
+            'date_of_birth': dob.toIso8601String(),
+            'people_dining': peopleDining.toString(),
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
-      String idToken = responseBody['id_token'];
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        String userId = responseBody['user'];
 
-      if (idToken != null) {
-        await storage.write(key: 'authToken', value: idToken);
-        return true;
+        if (userId != null) {
+          await storage.write(key: 'authToken', value: userId);
+          return true;
+        }
+      } else {
+        print('signup Error: ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
+    } catch (e) {
+      print('Exception in signup method: $e');
     }
 
     return false;

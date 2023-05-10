@@ -1,101 +1,65 @@
 import 'package:flutter/material.dart';
 
+import '../api.dart';
+import '../auth.dart';
+
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ChatListScreen> createState() => _ChatListScreenState();
+  _ChatListScreenState createState() => _ChatListScreenState();
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  // Example chat data
-  final List<String> chatTitles = [
-    'Chat 1',
-    'Chat 2',
-    'Chat 3',
-    'Chat 4',
-    'Chat 5',
-    'Chat 6',
-    'Chat 1',
-    'Chat 2',
-    'Chat 3',
-    'Chat 4',
-    'Chat 5',
-    'Chat 6',
-    'Chat 1',
-    'Chat 2',
-    'Chat 3',
-    'Chat 4',
-    'Chat 5',
-    'Chat 6',
-  ];
+  late Future<List<dynamic>> _chats;
+
+  @override
+  void initState() {
+    super.initState();
+    _chats = _getChats();
+  }
+
+  Future<List<dynamic>> _getChats() async {
+    String userId = await Auth().getUserId();
+    return await Api.getChats(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: ListView.builder(
-        itemCount: chatTitles.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              // Navigate to chat screen
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey[300]!,
-                    width: 0.1,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.blue,
-                    child: Text(
-                      chatTitles[index][0],
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          chatTitles[index],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Last message content...',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'HH:mm',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+      appBar: AppBar(
+        title: const Text('Chats'),
+      ),
+      body: FutureBuilder<List<dynamic>>(
+        future: _chats,
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(snapshot.data![index]['title']),
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/chat',
+                      arguments: snapshot.data![index]['chat_id'],
+                    );
+                  },
+                );
+              },
+            );
+          }
+
+          return const Center(child: Text('No chats found'));
         },
       ),
     );

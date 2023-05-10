@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../auth.dart';
+import 'package:mealmate/screens/signup_step2_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -8,75 +7,114 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _displayNameController = TextEditingController();
-  final Auth auth = Auth();
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _emailOrMobileController;
+  late TextEditingController _fullNameController;
+  late TextEditingController _usernameController;
+  late TextEditingController _passwordController;
 
-  void _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      bool signupSuccessful = await auth.signup(_emailController.text, _passwordController.text, _displayNameController.text);
+  @override
+  void initState() {
+    super.initState();
+    _emailOrMobileController = TextEditingController();
+    _fullNameController = TextEditingController();
+    _usernameController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
 
-      if (signupSuccessful) {
-        print('Signup successful');
-        // Navigate to the next screen or show a success message
-      } else {
-        print('Signup failed');
-        // Show an error message
-      }
-    }
+  @override
+  void dispose() {
+    _emailOrMobileController.dispose();
+    _fullNameController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signup'),
+        title: const Text('Step 1: Basic Information'),
       ),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
             child: Column(
-              children: <Widget>[
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (String? value) {
+                  controller: _emailOrMobileController,
+                  decoration: const InputDecoration(
+                    labelText: 'Mobile Number or Email',
+                  ),
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'Please enter your mobile number or email';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _fullNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your full name';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a username';
                     }
                     return null;
                   },
                 ),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                  ),
                   obscureText: true,
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'Please enter a password';
                     }
                     return null;
                   },
                 ),
-                TextFormField(
-                  controller: _displayNameController,
-                  decoration: InputDecoration(labelText: 'Display Name'),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your display name';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('Signup'),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Map<String, String> userData = {
+                        'email_or_phone': _emailOrMobileController.text,
+                        'full_name': _fullNameController.text,
+                        'username': _usernameController.text,
+                        'password': _passwordController.text,
+                      };
+
+                      // Navigate to the SignupStep2Screen and pass the user data
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignupStep2Screen(userData: userData),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Next'),
                 ),
               ],
             ),

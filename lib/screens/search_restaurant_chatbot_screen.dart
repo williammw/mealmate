@@ -21,8 +21,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   Map<String, PreviewData> datas = {};
   final List<String> _messages = [];
   final List<bool> _isUserMessage = [];
-  ScrollController _scrollController = ScrollController();
-  static const double appBarHeight = 56.0;
+  final ScrollController _scrollController = ScrollController();
   String _response = '';
   String _language = 'en';
   String _currentLanguage = 'en';
