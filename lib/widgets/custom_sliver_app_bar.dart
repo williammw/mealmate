@@ -4,20 +4,20 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 class CustomSliverAppBar extends StatelessWidget {
   final int currentIndex;
   final VoidCallback onAddPressed;
+  final VoidCallback onBackButtonPressed;
 
   const CustomSliverAppBar({
     Key? key,
     required this.currentIndex,
     required this.onAddPressed,
+    required this.onBackButtonPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       // ... The rest of the SliverAppBar properties
-      leading: GestureDetector(
-          // ... The rest of the leading GestureDetector properties
-          ),
+      leading: Navigator.canPop(context) ? const BackButton() : null,
       title: const Text('MealMate'),
       centerTitle: true,
       backgroundColor: Colors.black,

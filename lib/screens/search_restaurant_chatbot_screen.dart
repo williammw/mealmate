@@ -312,6 +312,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
                 onAddPressed: () {
                   // Handle add button press in SearchRestaurantChatbotScreen
                 },
+                onBackButtonPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ];
           },

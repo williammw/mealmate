@@ -74,6 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _onBackButtonPressed() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -90,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
               CustomSliverAppBar(
                 currentIndex: _currentIndex,
                 onAddPressed: _createNewChatAndNavigate,
+                onBackButtonPressed: _onBackButtonPressed,
               ),
             ];
           },

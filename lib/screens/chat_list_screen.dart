@@ -7,7 +7,7 @@ class ChatListScreen extends StatefulWidget {
   const ChatListScreen({Key? key}) : super(key: key);
 
   @override
-  _ChatListScreenState createState() => _ChatListScreenState();
+  State<ChatListScreen> createState() => _ChatListScreenState();
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
@@ -34,6 +34,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Chats'),
+      //   backgroundColor: Color(0xFF5682A3), // Telegram color
       // ),
       body: FutureBuilder<List<dynamic>>(
         future: _chats,
@@ -51,7 +52,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(snapshot.data![index]['title'] ?? 'Untitled Chat'),
+                  leading: CircleAvatar(
+                    child: Text((snapshot.data![index]['title'] as String? ?? 'U')[0]), // replace it with your chat avatar
+                  ),
+                  title: Text(snapshot.data![index]['title'] ?? 'Untitled Chat'), // replace it with your chat title
+                  subtitle: Text('Last message...'), // replace it with your last message
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text('11:11'), // replace it with your message time
+                      CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.blue,
+                        child: Text(
+                          '1',
+                          style: TextStyle(color: Colors.white),
+                        ), // replace it with your unread messages count
+                      ),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.pushNamed(
                       context,
