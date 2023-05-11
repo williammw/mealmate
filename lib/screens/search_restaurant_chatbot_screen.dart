@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
 import 'package:dart_openai/openai.dart';
 import 'dart:async';
@@ -10,12 +11,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../auth.dart';
+import '../providers/tab_index_notifier.dart';
 import '../widgets/bottom_navigation.dart';
 import '../widgets/custom_sliver_app_bar.dart';
 
 class SearchRestaurantChatbotScreen extends StatefulWidget {
   final String chatId;
-  const SearchRestaurantChatbotScreen({Key? key, required this.chatId, required Null Function() onBack}) : super(key: key);
+  final VoidCallback onBack;
+  const SearchRestaurantChatbotScreen({Key? key, required this.chatId, required this.onBack}) : super(key: key);
 
   @override
   State<SearchRestaurantChatbotScreen> createState() => _SearchRestaurantChatbotScreenState();
@@ -40,14 +43,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     // _initializeHeaders();
   }
 
-  // Future<void> _initializeHeaders() async {
-  //   String? token = await Auth().getToken();
-  //   if (token != null) {
-  //     setState(() {
-  //       _headers['Authorization'] = 'Bearer $token';
-  //     });
-  //   }
-  // }
+  void _onBack() {
+    widget.onBack();
+  }
 
   Future<void> _sendMessage(String message, String languageCode) async {
     setState(() {
@@ -304,43 +302,47 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            CustomSliverAppBar(
-              currentIndex: 1, // Or any other value based on your logic
-              onAddPressed: () {
-                // Handle add button press in SearchRestaurantChatbotScreen
-              },
-            ),
-          ];
-        },
-        body: GestureDetector(
-          onTap: () => {FocusScope.of(context).unfocus()},
-          child: Container(
-            color: Colors.white, // Set the background color to white
-            child: Column(
-              children: [
-                _buildLanguageDropdown(),
-                Flexible(
-                  child: _buildMessageList(),
-                ),
-                const Divider(height: 1.0),
-                Container(
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                  child: _buildTextComposer(),
-                ),
-              ],
+    return SafeArea(
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              CustomSliverAppBar(
+                currentIndex: 1, // Or any other value based on your logic
+                onAddPressed: () {
+                  // Handle add button press in SearchRestaurantChatbotScreen
+                },
+              ),
+            ];
+          },
+          body: GestureDetector(
+            onTap: () => {FocusScope.of(context).unfocus()},
+            child: Container(
+              color: Colors.white, // Set the background color to white
+              child: Column(
+                children: [
+                  _buildLanguageDropdown(),
+                  Flexible(
+                    child: _buildMessageList(),
+                  ),
+                  const Divider(height: 1.0),
+                  Container(
+                    decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                    child: _buildTextComposer(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigation(
-        currentIndex: 1, // Set the currentIndex value based on your logic
-        onTap: (index) {
-          // Handle the tab change in SearchRestaurantChatbotScreen
-        },
+        // bottomNavigationBar: CustomBottomNavigation(
+        //   currentIndex: 1, // Set the currentIndex value based on your logic
+        //   onTap: (index) {
+        //     print("onChatBotTabPressed $index");
+        //     // Handle the tab change in SearchRestaurantChatbotScreen
+        //     widget.onBack();
+        //   },
+        // ),
       ),
     );
   }

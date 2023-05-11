@@ -50,8 +50,8 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
         onPressed: () {
           // TODO: Implement meal suggestion functionality
         },
-        child: const Icon(Icons.restaurant_menu),
         backgroundColor: Theme.of(context).primaryColor,
+        child: const Icon(Icons.restaurant_menu),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:mealmate/providers/tab_index_notifier.dart';
 import 'package:mealmate/screens/home_screen.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/restaurant_details_screen.dart';
@@ -12,10 +13,16 @@ import 'package:mealmate/screens/user_profile_screen.dart';
 import 'package:mealmate/screens/settings_screen.dart';
 import 'package:mealmate/screens/conversations_screen.dart';
 import 'package:mealmate/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MealMateApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => TabIndexNotifier(),
+      child: const MealMateApp(),
+    ),
+  );
 }
 
 class MealMateApp extends StatelessWidget {
@@ -39,7 +46,13 @@ class MealMateApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/search_restaurant': (context) {
           final chatId = ModalRoute.of(context)?.settings.arguments as String;
-          return SearchRestaurantChatbotScreen(chatId: chatId, onBack: () {});
+          return SearchRestaurantChatbotScreen(
+            chatId: chatId,
+            onBack: () {
+              final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
+              tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab
+            },
+          );
         },
         '/restaurant_details': (context) => const RestaurantDetailsScreen(),
         '/user_profile': (context) => const UserProfileScreen(),
