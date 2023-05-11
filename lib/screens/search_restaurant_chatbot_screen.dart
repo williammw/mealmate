@@ -76,11 +76,43 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         _isUserMessage.add(false);
         _isLoading = false; // Stop showing the loading indicator
       });
+
+      // Store the message after successfully receiving the AI response
+      _storeMessage(message).catchError((error) {
+        // Handle errors when storing the message
+        Logger().e('Failed to store message', error);
+      });
     } else {
       setState(() {
         _isLoading = false; // Stop showing the loading indicator
       });
       throw Exception('Failed to load AI response');
+    }
+  }
+
+  Future<void> _storeMessage(String message) async {
+    print("Flutter _storeMessage called");
+    String? userId = await Auth().getUserId();
+    if (userId != null) {
+      final response = await http.post(
+        Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/store_message'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'user_id': userId,
+          'message': message,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        // Handle error
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to store message');
+      }
+    } else {
+      // Handle case where user is not logged in
     }
   }
 
