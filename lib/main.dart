@@ -39,7 +39,7 @@ class MealMateApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/search_restaurant': (context) {
           final chatId = ModalRoute.of(context)?.settings.arguments as String;
-          return SearchRestaurantChatbotScreen(chatId: chatId);
+          return SearchRestaurantChatbotScreen(chatId: chatId, onBack: () {});
         },
         '/restaurant_details': (context) => const RestaurantDetailsScreen(),
         '/user_profile': (context) => const UserProfileScreen(),

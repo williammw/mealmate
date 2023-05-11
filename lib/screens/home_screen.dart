@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import '../api.dart';
 import '../auth.dart';
 import '../models/chat.dart';
+import '../widgets/custom_sliver_app_bar.dart';
 import 'chat_list_screen.dart';
 import 'feed_screen.dart';
 
@@ -31,14 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const ChatListScreen(),
     const UserProfileScreen(),
     const SettingsScreen(),
-    // SearchRestaurantChatbotScreen(
-    //   chatId: '', // Add the correct chatId here
-    //   onBack: () {
-    //     setState(() {
-    //       _currentScreen = 1; // Show the ChatListScreen when the back button is pressed
-    //     });
-    //   },
-    // ),
   ];
 
   void _onTabChanged(int index) {
@@ -60,9 +53,19 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         final result = await Api.createNewChat(userId);
         String chatId = result['chat']['id'];
-        setState(() {
-          _currentScreen = 5; // Show the SearchRestaurantChatbotScreen
-        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SearchRestaurantChatbotScreen(
+              chatId: chatId,
+              onBack: () {
+                setState(() {
+                  _currentIndex = 1; // Show the ChatListScreen when the back button is pressed
+                });
+              },
+            ),
+          ),
+        );
       } catch (e) {
         print('Error creating a new chat: $e');
       }
@@ -84,96 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              SliverAppBar(
-                leading: GestureDetector(
-                  onTap: () {
-                    // Implement dropdown menu functionality here
-                    showMenu(
-                      context: context,
-                      position: const RelativeRect.fromLTRB(0, 100, 0, 0),
-                      items: [
-                        const PopupMenuItem(
-                          value: 'following',
-                          child: Text(
-                            'Following',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 'favorites',
-                          child: Text(
-                            'Favorites',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ],
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white.withOpacity(0.9),
-                    ).then((value) {
-                      if (value == 'following') {
-                        // Implement following functionality here
-                      } else if (value == 'favorites') {
-                        // Implement favorites functionality here
-                      }
-                    });
-                  },
-                  child: const Icon(
-                    EvaIcons.arrowDownOutline,
-                    color: Colors.white,
-                  ),
-                ),
-                title: const Text('MealMate'),
-                centerTitle: true,
-                backgroundColor: Colors.black,
-                flexibleSpace: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.blue,
-                        Colors.green,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                ),
-                pinned: _currentIndex == 1,
-                actions: _currentIndex == 1
-                    ? [
-                        IconButton(
-                          icon: const Icon(EvaIcons.heartOutline),
-                          onPressed: () {
-                            // Implement favorite functionality here
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(EvaIcons.menu2Outline),
-                          onPressed: () {
-                            // R_scaffoldKey.currentState?.openEndDrawer();
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: _createNewChatAndNavigate,
-                        ),
-                      ]
-                    : [
-                        IconButton(
-                          icon: const Icon(EvaIcons.heartOutline),
-                          onPressed: () {
-                            // Implement favorite functionality here
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(EvaIcons.menu2Outline),
-                          onPressed: () {
-                            _scaffoldKey.currentState?.openEndDrawer();
-                          },
-                        ),
-                      ],
+              CustomSliverAppBar(
+                currentIndex: _currentIndex,
+                onAddPressed: _createNewChatAndNavigate,
               ),
             ];
           },

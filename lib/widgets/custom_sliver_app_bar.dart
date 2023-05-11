@@ -1,84 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:logger/logger.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
-  final String title;
-  final bool showChatIcon;
+  final int currentIndex;
+  final VoidCallback onAddPressed;
 
-  const CustomSliverAppBar({super.key, required this.title, this.showChatIcon = false});
+  const CustomSliverAppBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onAddPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return SliverAppBar(
+      // ... The rest of the SliverAppBar properties
       leading: GestureDetector(
-        onTap: () {
-          // Implement dropdown menu functionality here
-          showMenu(
-            context: context,
-            position: const RelativeRect.fromLTRB(0, 100, 0, 0),
-            items: [
-              const PopupMenuItem(
-                value: 'following',
-                child: Text(
-                  'Following',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'favorites',
-                child: Text(
-                  'Favorites',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-            elevation: 8.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            color: Colors.white.withOpacity(0.9),
-          ).then((value) {
-            if (value == 'following') {
-              // Implement following functionality here
-            } else if (value == 'favorites') {
-              // Implement favorites functionality here
-            }
-          });
-        },
-        child: const Icon(
-          EvaIcons.arrowDownOutline,
-          color: Colors.white,
-        ),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
-      ),
-      centerTitle: true,
-      actions: [
-        IconButton(
-          icon: const Icon(EvaIcons.heartOutline),
-          onPressed: () {
-            // Implement favorite functionality here
-          },
-        ),
-        IconButton(
-          icon: const Icon(EvaIcons.menu2Outline),
-          onPressed: () {},
-        ),
-        if (showChatIcon)
-          IconButton(
-            // Add this IconButton
-            icon: const Icon(EvaIcons.messageCircleOutline),
-            onPressed: () {
-              Logger().d("click click");
-              Scaffold.of(context).openEndDrawer();
-            },
+          // ... The rest of the leading GestureDetector properties
           ),
-      ],
-      backgroundColor: Colors.blue,
+      title: const Text('MealMate'),
+      centerTitle: true,
+      backgroundColor: Colors.black,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -91,13 +33,36 @@ class CustomSliverAppBar extends StatelessWidget {
           ),
         ),
       ),
-      // forceElevated: false,
-      pinned: false,
-      floating: true,
+      pinned: currentIndex == 1,
+      actions: currentIndex == 1
+          ? [
+              IconButton(
+                icon: const Icon(EvaIcons.heartOutline),
+                onPressed: () {
+                  // Implement favorite functionality here
+                },
+              ),
+              IconButton(
+                icon: const Icon(EvaIcons.menu2Outline),
+                onPressed: () {
+                  // R_scaffoldKey.currentState?.openEndDrawer();
+                },
+              ),
+              // ... Other action buttons
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: onAddPressed,
+              ),
+            ]
+          : [
+              // ... Other action buttons
+              IconButton(
+                icon: const Icon(EvaIcons.heartOutline),
+                onPressed: () {
+                  // Implement favorite functionality here
+                },
+              ),
+            ],
     );
   }
 }
-
-
-
-// my requirenment is, there would be a long List to scroll,when scroll down Appbar hide, when i scroll up, i dont want scroll to the top then show the Appbar, i want when i scrollup the appbar will show like instgram...do you understand my requirenmnet?

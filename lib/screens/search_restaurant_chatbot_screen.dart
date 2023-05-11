@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../auth.dart';
+import '../widgets/bottom_navigation.dart';
+import '../widgets/custom_sliver_app_bar.dart';
 
 class SearchRestaurantChatbotScreen extends StatefulWidget {
   final String chatId;
@@ -302,22 +304,43 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GestureDetector(
-        onTap: () => {FocusScope.of(context).unfocus()},
-        child: Column(
-          children: [
-            _buildLanguageDropdown(),
-            Flexible(
-              child: _buildMessageList(),
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            CustomSliverAppBar(
+              currentIndex: 1, // Or any other value based on your logic
+              onAddPressed: () {
+                // Handle add button press in SearchRestaurantChatbotScreen
+              },
             ),
-            const Divider(height: 1.0),
-            Container(
-              decoration: BoxDecoration(color: Theme.of(context).cardColor),
-              child: _buildTextComposer(),
+          ];
+        },
+        body: GestureDetector(
+          onTap: () => {FocusScope.of(context).unfocus()},
+          child: Container(
+            color: Colors.white, // Set the background color to white
+            child: Column(
+              children: [
+                _buildLanguageDropdown(),
+                Flexible(
+                  child: _buildMessageList(),
+                ),
+                const Divider(height: 1.0),
+                Container(
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                  child: _buildTextComposer(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigation(
+        currentIndex: 1, // Set the currentIndex value based on your logic
+        onTap: (index) {
+          // Handle the tab change in SearchRestaurantChatbotScreen
+        },
       ),
     );
   }
