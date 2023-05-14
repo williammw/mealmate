@@ -14,6 +14,7 @@ import '../auth.dart';
 import '../providers/tab_index_notifier.dart';
 import '../widgets/bottom_navigation.dart';
 import '../widgets/custom_sliver_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class SearchRestaurantChatbotScreen extends StatefulWidget {
   final String chatId;

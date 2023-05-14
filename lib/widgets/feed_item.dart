@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:mealmate/models/feed_item_model.dart';
 import 'package:mealmate/widgets/video_player_widget.dart';
@@ -163,13 +165,40 @@ class _FeedItemState extends State<FeedItem> {
 
   @override
   Widget build(BuildContext context) {
+    return LongPressDraggable(
+      feedback: Transform.scale(
+        scale: 0.8,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.4,
+          width: MediaQuery.of(context).size.width,
+          child: Material(
+            color: Colors.transparent,
+            child: Opacity(
+              opacity: 0.7,
+              child: _feedItemWidget(ignorePointer: true),
+            ),
+          ),
+        ),
+      ),
+      child: _feedItemWidget(),
+      childWhenDragging: Opacity(
+        opacity: 0.5,
+        child: _feedItemWidget(),
+      ),
+    );
+  }
+
+  Widget _feedItemWidget({bool ignorePointer = false}) {
     return Container(
       margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 14.0),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildMediaContent(context),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4, // Adjust this height as needed
+            child: ignorePointer ? IgnorePointer(child: _buildMediaContent(context)) : _buildMediaContent(context),
+          ),
         ],
       ),
     );

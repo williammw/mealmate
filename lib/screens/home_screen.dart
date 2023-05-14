@@ -1,6 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mealmate/providers/tab_index_notifier.dart';
 import 'package:mealmate/widgets/bottom_navigation.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 import 'package:mealmate/screens/user_profile_screen.dart';
@@ -14,6 +15,7 @@ import '../models/chat.dart';
 import '../widgets/custom_sliver_app_bar.dart';
 import 'chat_list_screen.dart';
 import 'feed_screen.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -85,6 +87,30 @@ class _HomeScreenState extends State<HomeScreen> {
       statusBarIconBrightness: Brightness.light,
     ));
 
+    void _showBottomSheet() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: false,
+        builder: (context) {
+          // Get screen height using MediaQuery
+          double screenHeight = MediaQuery.of(context).size.height;
+
+          return Container(
+            // Set container height to 90% of screen height
+            height: screenHeight * 0.9,
+            child: SearchRestaurantChatbotScreen(
+              chatId: "your_chat_id",
+              onBack: () {
+                final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
+                tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab
+              },
+            ),
+          );
+        },
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -106,6 +132,11 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: CustomBottomNavigation(
           currentIndex: _currentIndex,
           onTap: _onTabChanged,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _showBottomSheet,
+          tooltip: 'Show Bottom Sheet',
+          child: Icon(Icons.add),
         ),
       ),
     );
