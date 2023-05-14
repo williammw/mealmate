@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:mealmate/models/feed_item_model.dart';
 import 'package:mealmate/widgets/video_player_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/drag_state_notifer.dart';
 
 class FeedItem extends StatefulWidget {
   final FeedItemModel feedItem;
@@ -166,6 +169,13 @@ class _FeedItemState extends State<FeedItem> {
   @override
   Widget build(BuildContext context) {
     return LongPressDraggable(
+      data: "YourData",
+      onDragStarted: () {
+        Provider.of<DragState>(context, listen: false).startDragging();
+      },
+      onDragEnd: (details) {
+        Provider.of<DragState>(context, listen: false).endDragging();
+      },
       feedback: Transform.scale(
         scale: 0.8,
         child: Container(
@@ -192,14 +202,16 @@ class _FeedItemState extends State<FeedItem> {
     return Container(
       margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 14.0),
       color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4, // Adjust this height as needed
-            child: ignorePointer ? IgnorePointer(child: _buildMediaContent(context)) : _buildMediaContent(context),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4, // Adjust this height as needed
+              child: ignorePointer ? IgnorePointer(child: _buildMediaContent(context)) : _buildMediaContent(context),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import '../api.dart';
 import '../auth.dart';
 import '../models/chat.dart';
+import '../providers/drag_state_notifer.dart';
 import '../widgets/custom_sliver_app_bar.dart';
 import 'chat_list_screen.dart';
 import 'feed_screen.dart';
@@ -133,10 +134,24 @@ class _HomeScreenState extends State<HomeScreen> {
           currentIndex: _currentIndex,
           onTap: _onTabChanged,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _showBottomSheet,
-          tooltip: 'Show Bottom Sheet',
-          child: Icon(Icons.add),
+        floatingActionButton: DragTarget(
+          builder: (context, candidateData, rejectedData) {
+            return Consumer<DragState>(
+              builder: (context, dragState, child) {
+                return FloatingActionButton(
+                  onPressed: dragState.dragging ? _showBottomSheet : _showBottomSheet,
+                  tooltip: 'Show Bottom Sheet',
+                  child: Icon(Icons.add),
+                );
+              },
+            );
+          },
+          onWillAccept: (data) {
+            return true; // When you want the data/check data
+          },
+          onAccept: (data) {
+            _showBottomSheet(); // Same action as pressing the FloatingActionButton
+          },
         ),
       ),
     );

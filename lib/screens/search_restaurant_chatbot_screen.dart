@@ -41,6 +41,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   void initState() {
     super.initState();
     OpenAI.apiKey = Env.apiKey;
+    // Add default message
+    _messages.add('Hello! How can I assist you today?');
+    _isUserMessage.add(false);
     // _initializeHeaders();
   }
 
