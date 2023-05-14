@@ -10,7 +10,10 @@ import 'package:mealmate/env/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../api.dart';
 import '../auth.dart';
+import '../models/message_model.dart';
+import '../providers/language_notifer.dart';
 import '../providers/tab_index_notifier.dart';
 import '../widgets/bottom_navigation.dart';
 import '../widgets/custom_sliver_app_bar.dart';
@@ -29,7 +32,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   final TextEditingController _textController = TextEditingController();
   Map<String, PreviewData> datas = {};
   // Map<String, String> _headers = {'Content-Type': 'application/json'};
-  final List<String> _messages = [];
+  final List<Message> _messages = [];
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
   String _response = '';
@@ -42,9 +45,29 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     super.initState();
     OpenAI.apiKey = Env.apiKey;
     // Add default message
-    _messages.add('Hello! How can I assist you today?');
+    String languageCode = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
+
+    // _messages.add('Hello! How can I assist you today?');
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      await _getDefaultMessage(languageCode);
+    });
+
     _isUserMessage.add(false);
     // _initializeHeaders();
+  }
+
+  Future<void> _getDefaultMessage(String langeCode) async {
+    try {
+      // String languageCode = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
+      // print('_getDefaultMessage: $languageCode');
+      final String defaultMessage = await Api.getDefaultMessage(langeCode);
+      setState(() {
+        _messages.add(Message(text: defaultMessage, isUser: false));
+      });
+    } catch (e) {
+      // Handle the exception as needed
+      print('Failed to load default message: $e');
+    }
   }
 
   void _onBack() {
@@ -76,7 +99,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         _response = aiResponse;
         Logger().d(_response);
         Logger().e(jsonResponse);
-        _messages.add(_response);
+        // _messages.add(_response);
+        _messages.add(Message(text: _response, isUser: false));
+
         _isUserMessage.add(false);
         _isLoading = false; // Stop showing the loading indicator
       });
@@ -120,6 +145,18 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     }
   }
 
+  Future<void> _changeLanguage(String newLanguage) async {
+    print('_changeLanguage newLanguage $newLanguage');
+    Api.changeLanguage(newLanguage);
+    var defaultMessage = await _getDefaultMessage(newLanguage);
+
+    setState(() {
+      _currentLanguage = newLanguage;
+      // Assuming _getDefaultMessage() returns a value you want to store in your state
+      defaultMessage = defaultMessage;
+    });
+  }
+
   Material _buildLanguageDropdown() {
     return Material(
       child: DropdownButton<String>(
@@ -151,7 +188,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       return;
     }
     setState(() {
-      _messages.add(text);
+      // _messages.add(text);
+      _messages.add(Message(text: text, isUser: true));
+
       _isUserMessage.add(true);
     });
     _textController.clear();
@@ -159,12 +198,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     _scrollToBottom();
   }
 
-  void _changeLanguage(String languageCode) {
-    setState(() {
-      _currentLanguage = languageCode;
-      _language = languageCode; // Add this line to update the _language variable
-    });
-  }
   // void _simulateBotResponse(String userMessage) {
   //   // Simulate a delay and add a dummy response
   //   Future.delayed(const Duration(seconds: 1), () {
@@ -192,8 +225,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           controller: _scrollController,
           itemCount: _messages.length,
           itemBuilder: (BuildContext context, int index) {
-            final bool isUserMessage = _isUserMessage[index];
-            final String message = _messages[index];
+            final Message messageObj = _messages[index];
+            final bool isUserMessage = messageObj.isUser;
+            final String message = messageObj.text;
             final bool isUrl = Uri.tryParse(message)?.hasAbsolutePath ?? false;
             final bool isLatestMessage = index == _messages.length - 1;
             final bool isMessageRead = isLatestMessage && !isUserMessage;
@@ -250,7 +284,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
                                 ),
                               ),
                             ),
-                          );
+                          ); // Remove extra return
                         },
                       )
                     : Container(
@@ -346,7 +380,11 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
               CustomSliverAppBar(
                 currentIndex: 1, // Or any other value based on your logic
                 onAddPressed: () {
-                  // Handle add button press in SearchRestaurantChatbotScreen
+                  setState(() {
+                    // _messages.add('This is the default message!');
+                    _isUserMessage.add(false); // false indicates this is a bot message
+                  });
+                  _scrollToBottom(); // Scroll to the bottom to show the new message
                 },
                 onBackButtonPressed: () {
                   Navigator.pop(context);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:mealmate/providers/drag_state_notifer.dart';
+import 'package:mealmate/providers/language_notifer.dart';
 import 'package:mealmate/providers/tab_index_notifier.dart';
 import 'package:mealmate/screens/home_screen.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
@@ -21,6 +22,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => LanguageProvider(),
+        ),
         ChangeNotifierProvider(
           create: (context) => TabIndexNotifier(),
         ),
