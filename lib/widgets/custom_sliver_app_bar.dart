@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomSliverAppBar extends StatelessWidget {
   final int currentIndex;
@@ -37,7 +38,7 @@ class CustomSliverAppBar extends StatelessWidget {
       actions: currentIndex == 1
           ? [
               IconButton(
-                icon: const Icon(EvaIcons.heartOutline),
+                icon: const FaIcon(FontAwesomeIcons.thumbsUp),
                 onPressed: () {
                   // Implement favorite functionality here
                 },
@@ -57,7 +58,7 @@ class CustomSliverAppBar extends StatelessWidget {
           : [
               // ... Other action buttons
               IconButton(
-                icon: const Icon(EvaIcons.heartOutline),
+                icon: const FaIcon(FontAwesomeIcons.thumbsUp),
                 onPressed: () {
                   // Implement favorite functionality here
                 },

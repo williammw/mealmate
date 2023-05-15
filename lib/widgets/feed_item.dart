@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mealmate/models/feed_item_model.dart';
 import 'package:mealmate/widgets/video_player_widget.dart';
 import 'package:provider/provider.dart';
@@ -121,42 +122,42 @@ class _FeedItemState extends State<FeedItem> {
             bottom: 30,
             left: 0,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(
-                      Icons.favorite_border,
-                      size: 32,
+                    icon: const FaIcon(
+                      FontAwesomeIcons.thumbsUp,
+                      size: 26,
                     ),
                   ),
                   IconButton(
                     color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(
-                      Icons.comment,
-                      size: 32,
+                    icon: const FaIcon(
+                      FontAwesomeIcons.comment,
+                      size: 26,
                     ),
                   ),
                   IconButton(
                     color: Colors.white,
                     onPressed: () {},
-                    icon: const Icon(
-                      Icons.share,
-                      size: 32,
+                    icon: const FaIcon(
+                      FontAwesomeIcons.share,
+                      size: 26,
                     ),
                   ),
-                  // IconButton(
-                  //   color: Colors.white,
-                  //   onPressed: () {},
-                  //   icon: const Icon(
-                  //     Icons.bookmark_border,
-                  //     size: 32,
-                  //   ),
-                  // ),
+                  IconButton(
+                    color: Colors.white,
+                    onPressed: () {},
+                    icon: const FaIcon(
+                      FontAwesomeIcons.bookmark,
+                      size: 26,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -199,20 +200,41 @@ class _FeedItemState extends State<FeedItem> {
   }
 
   Widget _feedItemWidget({bool ignorePointer = false}) {
-    return Container(
-      margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 14.0),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4, // Adjust this height as needed
-              child: ignorePointer ? IgnorePointer(child: _buildMediaContent(context)) : _buildMediaContent(context),
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 50.0),
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7, // Adjust this height as needed
+                      child: ignorePointer ? IgnorePointer(child: _buildMediaContent(context)) : _buildMediaContent(context),
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        height: 6, // Height of the border
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.blue, Colors.yellow] // Provide your desired colors here
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

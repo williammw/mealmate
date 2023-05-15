@@ -1,6 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mealmate/providers/tab_index_notifier.dart';
 import 'package:mealmate/widgets/bottom_navigation.dart';
 import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     const FeedScreen(),
     const ChatListScreen(),
+    const UserProfileScreen(),
     const UserProfileScreen(),
     const SettingsScreen(),
   ];
@@ -141,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return FloatingActionButton(
                   onPressed: dragState.dragging ? _showBottomSheet : _showBottomSheet,
                   tooltip: 'Show Bottom Sheet',
-                  child: Icon(Icons.add),
+                  child: const FaIcon(FontAwesomeIcons.paperclip),
                 );
               },
             );
