@@ -12,6 +12,7 @@ import 'dart:convert';
 
 import '../api.dart';
 import '../auth.dart';
+import '../models/chat_message.dart';
 import '../models/message_model.dart';
 import '../providers/language_notifer.dart';
 import '../providers/tab_index_notifier.dart';
@@ -32,7 +33,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   final TextEditingController _textController = TextEditingController();
   Map<String, PreviewData> datas = {};
   // Map<String, String> _headers = {'Content-Type': 'application/json'};
-  final List<Message> _messages = [];
+  final List<ChatMessage> _messages = [];
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
   String _response = '';
@@ -62,7 +63,18 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       // print('_getDefaultMessage: $languageCode');
       final String defaultMessage = await Api.getDefaultMessage(langeCode);
       setState(() {
-        _messages.add(Message(text: defaultMessage, isUser: false));
+        _messages.add(
+          ChatMessage(
+            id: 'some_id',
+            chatId: 'some_chat_id',
+            senderId: 'some_sender_id',
+            content: defaultMessage,
+            type: MessageType.text,
+            status: MessageStatus.sent,
+            attachments: [],
+            timestamp: DateTime.now(),
+          ),
+        );
       });
     } catch (e) {
       // Handle the exception as needed
@@ -100,7 +112,18 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         Logger().d(_response);
         Logger().e(jsonResponse);
         // _messages.add(_response);
-        _messages.add(Message(text: _response, isUser: false));
+        _messages.add(
+          ChatMessage(
+            id: 'some_id',
+            chatId: 'some_chat_id',
+            senderId: 'some_sender_id',
+            content: _response,
+            type: MessageType.text,
+            status: MessageStatus.sent,
+            attachments: [],
+            timestamp: DateTime.now(),
+          ),
+        );
 
         _isUserMessage.add(false);
         _isLoading = false; // Stop showing the loading indicator
@@ -189,7 +212,18 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     }
     setState(() {
       // _messages.add(text);
-      _messages.add(Message(text: text, isUser: true));
+      _messages.add(
+        ChatMessage(
+          id: 'some_id',
+          chatId: 'some_chat_id',
+          senderId: 'some_sender_id',
+          content: text,
+          type: MessageType.text,
+          status: MessageStatus.sent,
+          attachments: [],
+          timestamp: DateTime.now(),
+        ),
+      );
 
       _isUserMessage.add(true);
     });
@@ -225,9 +259,9 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           controller: _scrollController,
           itemCount: _messages.length,
           itemBuilder: (BuildContext context, int index) {
-            final Message messageObj = _messages[index];
-            final bool isUserMessage = messageObj.isUser;
-            final String message = messageObj.text;
+            final ChatMessage messageObj = _messages[index];
+            final bool isUserMessage = messageObj.senderId == 0 ? true : false;
+            final String message = messageObj.content;
             final bool isUrl = Uri.tryParse(message)?.hasAbsolutePath ?? false;
             final bool isLatestMessage = index == _messages.length - 1;
             final bool isMessageRead = isLatestMessage && !isUserMessage;
