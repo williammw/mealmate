@@ -180,7 +180,7 @@ class _FeedItemState extends State<FeedItem> {
       feedback: Transform.scale(
         scale: 0.8,
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.of(context).size.height * 0.7,
           width: MediaQuery.of(context).size.width,
           child: Material(
             color: Colors.transparent,
@@ -203,7 +203,7 @@ class _FeedItemState extends State<FeedItem> {
     return Stack(
       children: [
         Container(
-          margin: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 50.0),
+          margin: const EdgeInsets.only(left: 0, top: 8.0, right: 0, bottom: 50.0),
           color: Colors.white,
           child: SingleChildScrollView(
             child: Column(
