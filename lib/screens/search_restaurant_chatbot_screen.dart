@@ -58,20 +58,23 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       // String languageCode = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
       // print('_getDefaultMessage: $languageCode');
       final String defaultMessage = await Api.getDefaultMessage(langeCode);
-      setState(() {
-        _messages.add(
-          ChatMessage(
-            id: 'some_id',
-            chatId: 'some_chat_id',
-            senderId: 'some_sender_id',
-            content: defaultMessage,
-            type: MessageType.text,
-            status: MessageStatus.sent,
-            attachments: [],
-            timestamp: DateTime.now(),
-          ),
-        );
-      });
+      String? userId = await Auth().getUserId();
+      if (userId != null) {
+        setState(() {
+          _messages.add(
+            ChatMessage(
+              id: 'some_id',
+              chatId: userId,
+              senderId: '1',
+              content: defaultMessage,
+              type: MessageType.text,
+              status: MessageStatus.sent,
+              attachments: [],
+              timestamp: DateTime.now(),
+            ),
+          );
+        });
+      }
     } catch (e) {
       // Handle the exception as needed
       print('Failed to load default message: $e');
@@ -108,7 +111,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           ChatMessage(
             id: 'some_id',
             chatId: 'some_chat_id',
-            senderId: 'some_sender_id',
+            senderId: '1',
             content: _response,
             type: MessageType.text,
             status: MessageStatus.sent,
@@ -198,27 +201,31 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     );
   }
 
-  void _handleSubmitted(String text) {
+  void _handleSubmitted(String text) async {
     if (text.trim().isEmpty) {
       return;
     }
-    setState(() {
-      // _messages.add(text);
-      _messages.add(
-        ChatMessage(
-          id: 'some_id',
-          chatId: 'some_chat_id',
-          senderId: 'some_sender_id',
-          content: text,
-          type: MessageType.text,
-          status: MessageStatus.sent,
-          attachments: [],
-          timestamp: DateTime.now(),
-        ),
-      );
+    String? userId = await Auth().getUserId();
+    if (userId != null) {
+      setState(() {
+        // _messages.add(text);
+        _messages.add(
+          ChatMessage(
+            id: 'some_id',
+            chatId: userId,
+            senderId: '0',
+            content: text,
+            type: MessageType.text,
+            status: MessageStatus.sent,
+            attachments: [],
+            timestamp: DateTime.now(),
+          ),
+        );
 
-      _isUserMessage.add(true);
-    });
+        _isUserMessage.add(true);
+      });
+    }
+
     _textController.clear();
     _sendMessage(text, _language); // Replace _currentLanguage with _language
     _scrollToBottom();
