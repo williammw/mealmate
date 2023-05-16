@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
 import 'package:dart_openai/openai.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:async';
 import '../env/env.dart';
 import 'package:http/http.dart' as http;
@@ -30,11 +31,13 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   Map<String, PreviewData> datas = {};
   // Map<String, String> _headers = {'Content-Type': 'application/json'};
   final List<ChatMessage> _messages = [];
+  final String currentChatId = Uuid().v4(); // Generate a unique ID for the current chat
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
   String _response = '';
   final String _language = 'en';
   String _currentLanguage = 'en';
+
   bool _isLoading = false; // Add this line
 
   @override
@@ -63,7 +66,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         setState(() {
           _messages.add(
             ChatMessage(
-              id: 'some_id',
+              id: const Uuid().v4(),
               chatId: userId,
               senderId: '1',
               content: defaultMessage,
@@ -94,7 +97,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       }),
       headers: {
         'Content-Type': 'application/json',
-        // 'X-API-Key': 'mj-JNOG*&FT&3fijoognu408978J*I',
       },
     );
 
@@ -102,38 +104,77 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       final jsonResponse = json.decode(response.body);
       final aiResponse = jsonResponse['response'];
 
-      setState(() {
-        _response = aiResponse;
-        Logger().d(_response);
-        Logger().e(jsonResponse);
-        // _messages.add(_response);
-        _messages.add(
-          ChatMessage(
-            id: 'some_id',
-            chatId: 'some_chat_id',
-            senderId: '1',
-            content: _response,
-            type: MessageType.text,
-            status: MessageStatus.sent,
-            attachments: [],
-            timestamp: DateTime.now(),
-          ),
-        );
+      String? userId = await Auth().getUserId();
 
-        _isUserMessage.add(false);
-        _isLoading = false; // Stop showing the loading indicator
+      _storeAiResponse(aiResponse).catchError((error) {
+        // Handle errors when storing the AI response
+        Logger().e('Failed to store AI response', error);
       });
 
-      // Store the message after successfully receiving the AI response
-      _storeMessage(message).catchError((error) {
-        // Handle errors when storing the message
-        Logger().e('Failed to store message', error);
-      });
+      if (userId != null) {
+        setState(() {
+          _response = aiResponse;
+          Logger().d(_response);
+          Logger().e(jsonResponse);
+
+          _messages.add(
+            ChatMessage(
+              id: const Uuid().v4(),
+              chatId: userId,
+              senderId: '1',
+              content: _response,
+              type: MessageType.text,
+              status: MessageStatus.sent,
+              attachments: [],
+              timestamp: DateTime.now(),
+            ),
+          );
+
+          _isUserMessage.add(false);
+          _isLoading = false; // Stop showing the loading indicator
+        });
+
+        // Store the message after successfully receiving the AI response
+        _storeMessage(aiResponse).catchError((error) {
+          // Handle errors when storing the message
+          Logger().e('Failed to store AI response', error);
+        });
+      }
     } else {
       setState(() {
         _isLoading = false; // Stop showing the loading indicator
       });
       throw Exception('Failed to load AI response');
+    }
+  }
+
+  Future<void> _storeAiResponse(String aiResponse) async {
+    print('Flutter _storeAiResponse called');
+    String? userId = await Auth().getUserId();
+    if (userId != null) {
+      try {
+        final response = await http.post(
+          Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/store_message'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'user_id': userId,
+            'message': aiResponse,
+          }),
+        );
+
+        if (response.statusCode != 200) {
+          // Handle error
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${response.body}');
+          throw Exception('Failed to store AI response');
+        }
+      } catch (e) {
+        Logger().e('Failed to store AI response', e);
+      }
+    } else {
+      // Handle case where user is not logged in
     }
   }
 
@@ -211,7 +252,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         // _messages.add(text);
         _messages.add(
           ChatMessage(
-            id: 'some_id',
+            id: const Uuid().v4(),
             chatId: userId,
             senderId: '0',
             content: text,
@@ -230,16 +271,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     _sendMessage(text, _language); // Replace _currentLanguage with _language
     _scrollToBottom();
   }
-
-  // void _simulateBotResponse(String userMessage) {
-  //   // Simulate a delay and add a dummy response
-  //   Future.delayed(const Duration(seconds: 1), () {
-  //     setState(() {
-  //       _messages.add('Dummy response to: $userMessage');
-  //       _isUserMessage.add(false);
-  //     });
-  //   });
-  // }
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -445,14 +476,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
             ),
           ),
         ),
-        // bottomNavigationBar: CustomBottomNavigation(
-        //   currentIndex: 1, // Set the currentIndex value based on your logic
-        //   onTap: (index) {
-        //     print("onChatBotTabPressed $index");
-        //     // Handle the tab change in SearchRestaurantChatbotScreen
-        //     widget.onBack();
-        //   },
-        // ),
       ),
     );
   }
