@@ -51,7 +51,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _getDefaultMessage(languageCode);
     });
-
     _isUserMessage.add(false);
     // _initializeHeaders();
   }
@@ -254,6 +253,8 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   }
 
   void _handleSubmitted(String text) async {
+    // describe this function
+    print('Flutter _handleSubmitted called $text');
     if (text.trim().isEmpty) {
       return;
     }

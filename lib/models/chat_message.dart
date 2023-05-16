@@ -88,3 +88,10 @@ enum AttachmentType {
   video,
   // Add more as needed
 }
+
+class Response {
+  final String content;
+  final DateTime? createdAt;
+
+  const Response({required this.content, this.createdAt});
+}
