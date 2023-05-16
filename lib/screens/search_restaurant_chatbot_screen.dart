@@ -135,7 +135,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         });
 
         // Store the message after successfully receiving the AI response
-        _storeMessage(aiResponse).catchError((error) {
+        _storeMessage(message).catchError((error) {
           // Handle errors when storing the message
           Logger().e('Failed to store AI response', error);
         });
@@ -290,7 +290,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           itemCount: _messages.length,
           itemBuilder: (BuildContext context, int index) {
             final ChatMessage messageObj = _messages[index];
-            final bool isUserMessage = messageObj.senderId == 0 ? true : false;
+            final bool isUserMessage = messageObj.senderId == '0' ? true : false;
             final String message = messageObj.content;
             final bool isUrl = Uri.tryParse(message)?.hasAbsolutePath ?? false;
             final bool isLatestMessage = index == _messages.length - 1;
