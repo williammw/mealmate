@@ -1,0 +1,26 @@
+users: Collection
+  - uid: Document
+    - email: String
+    - displayName: String
+    - photoURL: String
+    - createdAt: Timestamp
+    - chats: Subcollection
+      - chatId: Document
+        - createdAt: Timestamp
+        - updatedAt: Timestamp
+        - messages: Map
+            - messageId: String
+              - createdAt: Timestamp
+              - updatedAt: Timestamp
+              - type: String (text, image, url, voice, video)
+              - content: String (text or URL) / File (image, voice, video)
+              - sender: String (user or bot)
+              - processed: Boolean (True if message has been processed by get-3.5)
+              - response: Map
+                - content: String
+                - createdAt: Timestamp
+        - summary: Subcollection
+          - summaryId: Document
+            - createdAt: Timestamp
+            - updatedAt: Timestamp
+            - content: String (Summary of the chat)
