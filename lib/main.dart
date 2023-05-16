@@ -1,20 +1,18 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
-import 'package:mealmate/providers/drag_state_notifer.dart';
-import 'package:mealmate/providers/language_notifer.dart';
-import 'package:mealmate/providers/tab_index_notifier.dart';
-import 'package:mealmate/screens/home_screen.dart';
-import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
-import 'package:mealmate/screens/restaurant_details_screen.dart';
-import 'package:mealmate/screens/signup_birthdate_screen.dart';
-import 'package:mealmate/screens/signup_screen.dart';
-import 'package:mealmate/screens/signup_securitycode_screen.dart';
-import 'package:mealmate/screens/user_profile_screen.dart';
-import 'package:mealmate/screens/settings_screen.dart';
-import 'package:mealmate/screens/conversations_screen.dart';
-import 'package:mealmate/screens/login_screen.dart';
+import 'providers/drag_state_notifer.dart';
+import 'providers/language_notifer.dart';
+import 'providers/tab_index_notifier.dart';
+import 'screens/home_screen.dart';
+import 'screens/search_restaurant_chatbot_screen.dart';
+import 'screens/restaurant_details_screen.dart';
+import 'screens/signup_birthdate_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/signup_securitycode_screen.dart';
+import 'screens/user_profile_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -91,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkLoginStatus() async {
     const storage = FlutterSecureStorage();
     final authToken = await storage.read(key: 'authToken'); // Changed the key here
-    Logger().d("_checkLoginStatus authToken ${storage}");
+    Logger().d('_checkLoginStatus authToken $storage');
     if (authToken == null) {
       Navigator.pushReplacementNamed(context, '/login');
     } else {

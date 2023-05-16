@@ -18,8 +18,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
+          children: const [
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Personal Information',
@@ -28,7 +28,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             // TODO: Add user personal information display and edit options here
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Dietary Preferences',
@@ -37,7 +37,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             // TODO: Add user dietary preferences settings here
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Favorite Restaurants',

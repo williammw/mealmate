@@ -6,19 +6,15 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
 import 'package:dart_openai/openai.dart';
 import 'dart:async';
-import 'package:mealmate/env/env.dart';
+import '../env/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../api.dart';
 import '../auth.dart';
 import '../models/chat_message.dart';
-import '../models/message_model.dart';
 import '../providers/language_notifer.dart';
-import '../providers/tab_index_notifier.dart';
-import '../widgets/bottom_navigation.dart';
 import '../widgets/custom_sliver_app_bar.dart';
-import 'package:provider/provider.dart';
 
 class SearchRestaurantChatbotScreen extends StatefulWidget {
   final String chatId;
@@ -37,7 +33,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
   String _response = '';
-  String _language = 'en';
+  final String _language = 'en';
   String _currentLanguage = 'en';
   bool _isLoading = false; // Add this line
 
@@ -49,7 +45,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     String languageCode = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
 
     // _messages.add('Hello! How can I assist you today?');
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _getDefaultMessage(languageCode);
     });
 
@@ -80,10 +76,6 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
       // Handle the exception as needed
       print('Failed to load default message: $e');
     }
-  }
-
-  void _onBack() {
-    widget.onBack();
   }
 
   Future<void> _sendMessage(String message, String languageCode) async {
@@ -143,7 +135,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   }
 
   Future<void> _storeMessage(String message) async {
-    print("Flutter _storeMessage called");
+    print('Flutter _storeMessage called');
     String? userId = await Auth().getUserId();
     if (userId != null) {
       final response = await http.post(
@@ -383,10 +375,10 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: _isLoading
-                ? Container(
+                ? const SizedBox(
                     width: 20.0,
                     height: 20.0,
-                    child: const CircularProgressIndicator(),
+                    child: CircularProgressIndicator(),
                   )
                 : Material(
                     // Wrap IconButton with Material

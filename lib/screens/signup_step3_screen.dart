@@ -5,7 +5,7 @@ import 'login_screen.dart';
 class SignupStep3Screen extends StatefulWidget {
   final Map<String, String> userData;
 
-  SignupStep3Screen({required this.userData});
+  const SignupStep3Screen({required this.userData});
 
   @override
   _SignupStep3ScreenState createState() => _SignupStep3ScreenState();
@@ -39,7 +39,7 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -83,11 +83,11 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Error'),
-                                content: Text('Invalid confirmation code.'),
+                                title: const Text('Error'),
+                                content: const Text('Invalid confirmation code.'),
                                 actions: [
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -102,7 +102,7 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                       }
                     }
                   },
-                  child: Text('Confirm'),
+                  child: const Text('Confirm'),
                 ),
               ],
             ),

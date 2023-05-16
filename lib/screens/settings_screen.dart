@@ -6,7 +6,7 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   void _logout(BuildContext context) async {
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? idToken = await storage.read(key: 'authToken');
 
     if (idToken != null) {

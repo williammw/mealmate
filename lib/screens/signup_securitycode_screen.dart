@@ -6,32 +6,32 @@ class SignupSecurityCodeScreen extends StatefulWidget {
 }
 
 class _SignupSecurityCodeScreenState extends State<SignupSecurityCodeScreen> {
-  TextEditingController _securityCodeController = TextEditingController();
+  final TextEditingController _securityCodeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signup - Security Code'),
+        title: const Text('Signup - Security Code'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _securityCodeController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Security Code',
                 hintText: 'Enter the security code you received',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // TODO: Validate the security code and complete the registration process
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         ),

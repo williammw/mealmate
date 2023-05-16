@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Show an error message
         print('Login failed');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Login failed. Please check your email and password.'),
             backgroundColor: Colors.red,
           ),
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please fill in all required fields.'),
           backgroundColor: Colors.red,
         ),
@@ -57,18 +57,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
@@ -88,20 +88,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 _isLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : Column(
                         children: [
                           ElevatedButton(
                             onPressed: _submitForm,
-                            child: Text('Login'),
+                            child: const Text('Login'),
                           ),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/signup');
                             },
-                            child: Text('Don\'t have an account? Signup here.'),
+                            child: const Text('Don\'t have an account? Signup here.'),
                           ),
                         ],
                       ),

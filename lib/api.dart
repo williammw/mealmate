@@ -1,18 +1,13 @@
 // Import required packages
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mealmate/providers/language_notifer.dart';
-import 'package:provider/provider.dart';
 
 class Api {
   // Other methods and variables...
 
-  static String _currentLanguage = 'en'; // default language is English
+// default language is English
 
-  static void changeLanguage(String newLanguage) {
-    _currentLanguage = newLanguage;
-  }
+  static void changeLanguage(String newLanguage) {}
 
   // Modify the verifySecurityCode method to return a boolean value
   static Future<bool> verifySecurityCode(String email, String securityCode) async {
@@ -30,7 +25,7 @@ class Api {
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        if (result['message'] == "Security code verified successfully") {
+        if (result['message'] == 'Security code verified successfully') {
           return true;
         } else {
           return false;
@@ -40,7 +35,7 @@ class Api {
       }
     } catch (e) {
       print('Exception in verifySecurityCode: $e');
-      throw e;
+      rethrow;
     }
   }
 

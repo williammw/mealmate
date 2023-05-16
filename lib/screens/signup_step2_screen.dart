@@ -1,13 +1,15 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:mealmate/api.dart';
+
+import '../api.dart';
 import '../auth.dart';
 import 'signup_step3_screen.dart';
 
 class SignupStep2Screen extends StatefulWidget {
   final Map<String, String> userData;
 
-  SignupStep2Screen({required this.userData});
+  const SignupStep2Screen({required this.userData});
 
   @override
   _SignupStep2ScreenState createState() => _SignupStep2ScreenState();
@@ -19,8 +21,8 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
     return List.generate(6, (index) => random.nextInt(10).toString()).join('');
   }
 
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _diningWithController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _diningWithController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -49,7 +51,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -58,7 +60,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                 const Text('Enter your date of birth:'),
                 TextFormField(
                   controller: _dobController,
-                  decoration: InputDecoration(hintText: 'YYYY-MM-DD'),
+                  decoration: const InputDecoration(hintText: 'YYYY-MM-DD'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a valid date';
@@ -121,11 +123,11 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Error'),
-                              content: Text('Signup failed. Please try again.'),
+                              title: const Text('Error'),
+                              content: const Text('Signup failed. Please try again.'),
                               actions: [
                                 TextButton(
-                                  child: Text('OK'),
+                                  child: const Text('OK'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -137,7 +139,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       }
                     }
                   },
-                  child: Text('Generate and Send Security Code'),
+                  child: const Text('Generate and Send Security Code'),
                 ),
               ],
             ),

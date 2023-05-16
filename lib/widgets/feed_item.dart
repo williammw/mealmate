@@ -1,9 +1,8 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mealmate/models/feed_item_model.dart';
-import 'package:mealmate/widgets/video_player_widget.dart';
+import '../models/feed_item_model.dart';
+import 'video_player_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/drag_state_notifer.dart';
@@ -85,7 +84,7 @@ class _FeedItemState extends State<FeedItem> {
             left: 18,
             child: Text(
               '${_currentPage + 1}/${mediaWidgets.length}',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
           Positioned(
@@ -170,7 +169,7 @@ class _FeedItemState extends State<FeedItem> {
   @override
   Widget build(BuildContext context) {
     return LongPressDraggable(
-      data: "YourData",
+      data: 'YourData',
       onDragStarted: () {
         Provider.of<DragState>(context, listen: false).startDragging();
       },
@@ -179,7 +178,7 @@ class _FeedItemState extends State<FeedItem> {
       },
       feedback: Transform.scale(
         scale: 0.8,
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
           width: MediaQuery.of(context).size.width,
           child: Material(
@@ -191,11 +190,11 @@ class _FeedItemState extends State<FeedItem> {
           ),
         ),
       ),
-      child: _feedItemWidget(),
       childWhenDragging: Opacity(
         opacity: 0.5,
         child: _feedItemWidget(),
       ),
+      child: _feedItemWidget(),
     );
   }
 

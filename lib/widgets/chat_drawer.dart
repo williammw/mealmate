@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
 
 class ChatDrawer extends StatelessWidget {
   final VoidCallback onNewChat;
 
   const ChatDrawer({Key? key, required this.onNewChat}) : super(key: key);
-
-  void _handleNewChatButton(BuildContext context) {
-    Navigator.pop(context); // Close the drawer
-    onNewChat();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +29,16 @@ class ChatDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.chat),
-            title: Text('Chat 1'),
+            leading: const Icon(Icons.chat),
+            title: const Text('Chat 1'),
             onTap: () {
               // Update the state of the app.
               // ...
             },
           ),
           ListTile(
-            leading: Icon(Icons.chat),
-            title: Text('Chat 2'),
+            leading: const Icon(Icons.chat),
+            title: const Text('Chat 2'),
             onTap: () {
               // Update the state of the app.
               // ...
@@ -52,8 +46,8 @@ class ChatDrawer extends StatelessWidget {
           ),
           // Add the "New Chat" button here
           ListTile(
-            leading: Icon(Icons.add),
-            title: Text('New Chat'),
+            leading: const Icon(Icons.add),
+            title: const Text('New Chat'),
             onTap: () {
               Navigator.pop(context); // Close the drawer
               onNewChat();

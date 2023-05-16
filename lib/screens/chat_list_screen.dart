@@ -56,10 +56,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     child: Text((snapshot.data![index]['title'] as String? ?? 'U')[0]), // replace it with your chat avatar
                   ),
                   title: Text(snapshot.data![index]['title'] ?? 'Untitled Chat'), // replace it with your chat title
-                  subtitle: Text('Last message...'), // replace it with your last message
+                  subtitle: const Text('Last message...'), // replace it with your last message
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
+                    children: const <Widget>[
                       Text('11:11'), // replace it with your message time
                       CircleAvatar(
                         radius: 10,

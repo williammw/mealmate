@@ -1,18 +1,14 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mealmate/providers/tab_index_notifier.dart';
-import 'package:mealmate/widgets/bottom_navigation.dart';
-import 'package:mealmate/screens/search_restaurant_chatbot_screen.dart';
-import 'package:mealmate/screens/user_profile_screen.dart';
-import 'package:mealmate/screens/settings_screen.dart';
-import 'package:mealmate/widgets/chat_drawer.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import '../providers/tab_index_notifier.dart';
+import '../widgets/bottom_navigation.dart';
+import 'search_restaurant_chatbot_screen.dart';
+import 'user_profile_screen.dart';
+import 'settings_screen.dart';
+import '../widgets/chat_drawer.dart';
 import '../api.dart';
 import '../auth.dart';
-import '../models/chat.dart';
 import '../providers/drag_state_notifer.dart';
 import '../widgets/custom_sliver_app_bar.dart';
 import 'chat_list_screen.dart';
@@ -99,11 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
           // Get screen height using MediaQuery
           double screenHeight = MediaQuery.of(context).size.height;
 
-          return Container(
+          return SizedBox(
             // Set container height to 90% of screen height
             height: screenHeight * 0.9,
             child: SearchRestaurantChatbotScreen(
-              chatId: "your_chat_id",
+              chatId: 'your_chat_id',
               onBack: () {
                 final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
                 tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab

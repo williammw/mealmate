@@ -13,15 +13,15 @@ class _SignupBirthdateScreenState extends State<SignupBirthdateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signup - Birthdate & Guests'),
+        title: const Text('Signup - Birthdate & Guests'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               readOnly: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Date of birth',
                 hintText: 'Select your date of birth',
               ),
@@ -39,10 +39,10 @@ class _SignupBirthdateScreenState extends State<SignupBirthdateScreen> {
                 }
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Number of people',
                 hintText: 'Enter the number of people you usually dine with',
               ),
@@ -52,13 +52,13 @@ class _SignupBirthdateScreenState extends State<SignupBirthdateScreen> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // TODO: Save user's birthdate and number of people, then navigate to the next screen
                 Navigator.pushNamed(context, '/signup_securitycode');
               },
-              child: Text('Next'),
+              child: const Text('Next'),
             ),
           ],
         ),

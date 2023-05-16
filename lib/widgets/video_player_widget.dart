@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:mealmate/widgets/video_overlay_widget.dart';
+import 'video_overlay_widget.dart';
 
 class AlmostRectangularSliderTrackShape extends SliderTrackShape {
   final double height;
@@ -40,8 +40,8 @@ class AlmostRectangularSliderTrackShape extends SliderTrackShape {
       height,
     );
 
-    canvas.drawRRect(RRect.fromRectAndRadius(activeRect, Radius.circular(0.5)), activePaint);
-    canvas.drawRRect(RRect.fromRectAndRadius(inactiveRect, Radius.circular(0.5)), inactivePaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(activeRect, const Radius.circular(0.5)), activePaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(inactiveRect, const Radius.circular(0.5)), inactivePaint);
   }
 
   @override

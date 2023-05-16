@@ -35,7 +35,7 @@ class MealRecommendationCard extends StatelessWidget {
               children: [
                 Text(
                   dishName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
