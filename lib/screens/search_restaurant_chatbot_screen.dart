@@ -99,14 +99,15 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         'Content-Type': 'application/json',
       },
     );
-
+    var uuid = Uuid().v4();
+    var uuid2 = Uuid().v4();
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final aiResponse = jsonResponse['response'];
 
       String? userId = await Auth().getUserId();
 
-      _storeAiResponse(aiResponse).catchError((error) {
+      _storeAiResponse(aiResponse, uuid).catchError((error) {
         // Handle errors when storing the AI response
         Logger().e('Failed to store AI response', error);
       });
@@ -119,7 +120,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
 
           _messages.add(
             ChatMessage(
-              id: const Uuid().v4(),
+              id: uuid2,
               chatId: userId,
               senderId: '1',
               content: _response,
@@ -135,7 +136,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         });
 
         // Store the message after successfully receiving the AI response
-        _storeMessage(message).catchError((error) {
+        _storeMessage(message, uuid2).catchError((error) {
           // Handle errors when storing the message
           Logger().e('Failed to store AI response', error);
         });
@@ -148,7 +149,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     }
   }
 
-  Future<void> _storeAiResponse(String aiResponse) async {
+  Future<void> _storeAiResponse(String aiResponse, String uuid) async {
     print('Flutter _storeAiResponse called');
     String? userId = await Auth().getUserId();
     if (userId != null) {
@@ -158,9 +159,14 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(<String, String>{
-            'user_id': userId,
-            'message': aiResponse,
+          body: jsonEncode(<String, dynamic>{
+            'id': uuid, // replace with actual message id
+            'chatId': userId, // replace with actual chat id
+            'senderId': '1',
+            'content': aiResponse,
+            'type': 'text', // replace with actual type
+            'status': 'sent', // replace with actual status
+            'timestamp': DateTime.now().toIso8601String(), // replace with actual timestamp
           }),
         );
 
@@ -178,7 +184,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     }
   }
 
-  Future<void> _storeMessage(String message) async {
+  Future<void> _storeMessage(String message, String uuid) async {
     print('Flutter _storeMessage called');
     String? userId = await Auth().getUserId();
     if (userId != null) {
@@ -187,9 +193,14 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'user_id': userId,
-          'message': message,
+        body: jsonEncode(<String, dynamic>{
+          'id': uuid, // replace with actual message id
+          'chatId': userId, // replace with actual chat id
+          'senderId': '0',
+          'content': message,
+          'type': 'text', // replace with actual type
+          'status': 'sent', // replace with actual status
+          'timestamp': DateTime.now().toIso8601String(), // replace with actual timestamp
         }),
       );
 

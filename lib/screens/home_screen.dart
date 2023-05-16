@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isAnimated = false;
   int _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   int _currentScreen = 0;
@@ -77,6 +78,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onBackButtonPressed() {
     Navigator.pop(context);
+  }
+
+  void _animate() {
+    setState(() {
+      _isAnimated = !_isAnimated;
+    });
   }
 
   @override
