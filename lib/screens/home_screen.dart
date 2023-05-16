@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mealmate/screens/chatbot_screen.dart';
 import '../providers/tab_index_notifier.dart';
 import '../widgets/bottom_navigation.dart';
 import 'search_restaurant_chatbot_screen.dart';
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const FeedScreen(),
     const ChatListScreen(),
     const UserProfileScreen(),
-    const UserProfileScreen(),
+    const ChatbotScreen(), // for backup only
     const SettingsScreen(),
   ];
 

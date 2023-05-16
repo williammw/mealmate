@@ -48,6 +48,7 @@ enum MessageType {
   text,
   image,
   video,
+  url,
   // Add more as needed
 }
 

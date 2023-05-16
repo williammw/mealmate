@@ -51,6 +51,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _getDefaultMessage(languageCode);
     });
+
     _isUserMessage.add(false);
     // _initializeHeaders();
   }
