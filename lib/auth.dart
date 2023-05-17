@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import 'models/new_chat_related_models.dart';
+
 class Auth {
   final String apiUrl = 'https://starfish-app-rk6pn.ondigitalocean.app';
   // final String apiUrl = 'http://127.0.0.1:5000/';
@@ -68,5 +70,13 @@ class Auth {
 
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
+  }
+
+  Future<List<Chat>> getChatsForUser(String userId) async {
+    // Fetch the chats for the user from Firebase
+    // This might involve a query to the 'chats' subcollection under the user document
+    // For each chat document, create a new Chat object and add it to a list
+    // Finally, return the list of chats
+    return [];
   }
 }

@@ -106,13 +106,15 @@ class _HomeScreenState extends State<HomeScreen> {
           return SizedBox(
             // Set container height to 90% of screen height
             height: screenHeight * 0.9,
-            child: SearchRestaurantChatbotScreen(
-              chatId: 'your_chat_id',
-              onBack: () {
-                final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
-                tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab
-              },
-            ),
+            child: const ChatbotScreen(),
+
+            // SearchRestaurantChatbotScreen(
+            //   chatId: 'your_chat_id',
+            //   onBack: () {
+            //     final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
+            //     tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab
+            //   },
+            // ),
           );
         },
       );

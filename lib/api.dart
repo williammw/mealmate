@@ -2,6 +2,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'models/new_chat_related_models.dart';
+
 class Api {
   // Other methods and variables...
 
