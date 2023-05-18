@@ -37,19 +37,31 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _initializeUserAndChat() async {
-    // Fetch user details and current chat from your backend
-    var userDetails = await Api().getUserDetails();
+    Logger().d('Initializing user and chat...');
 
-    if (userDetails != null) {
-      setState(() {
-        _userId = userDetails.userId;
-        _currentChat = Chat(
-          chatId: userDetails.currentChat.chatId,
-          createdAt: userDetails.currentChat.createdAt,
-          updatedAt: userDetails.currentChat.updatedAt,
-          userId: _userId,
-        );
-      });
+    String? tempUserId = await Auth().getUserId();
+    Logger().d('tempUserId   $tempUserId');
+
+    // Fetch user details and current chat from your backend
+    var userDetails = await Api().getUserDetails(tempUserId!);
+    Logger().d('userDetails $userDetails');
+
+    // Assuming the User object contains the current chat ID.
+    String currentChatId = userDetails.currentChatId;
+
+    // Now get the current chat using the chat ID
+    Logger().d('getChat pass $currentChatId $tempUserId');
+
+    try {
+      _currentChat = await Api.getChat(currentChatId, tempUserId);
+      // You also need to load the chat messages for this chat
+      await _loadMessages();
+    } catch (e) {
+      Logger().d('No chat found for this user, creating a new chat.');
+      var newChatResponse = await Api.createNewChat(tempUserId);
+      // Handle the new chat response. It should include chatId which you can use to set _currentChat.
+      // You may need to modify your backend to return the created chatId in the response.
+      // _currentChat = Chat.fromJson(newChatResponse);
     }
   }
 
@@ -61,40 +73,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  // Future<void> _initializeChatData() async {
-  //   List<Chat> userChats = await Auth().getChatsForUser(_userId);
-  //   var chatData = await Api.createNewChat(_userId);
-
-  //   if (chatData.containsKey('chat_id')) {
-  //     _currentChat = Chat(
-  //       chatId: chatData['chat_id'],
-  //       createdAt: DateTime.parse(chatData['created_at']),
-  //       updatedAt: DateTime.parse(chatData['updated_at']),
-  //       userId: _userId,
-  //     );
-  //   } else {
-  //     var userChats = await Auth().getChatsForUser(_userId);
-  //     if (userChats.isNotEmpty) {
-  //       _currentChat = userChats.first;
-  //     }
-  //   }
-  // }
-
-  // Future<void> _initializeUserData() async {
-  //   String? tempUserId = await Auth().getUserId();
-  //   print(tempUserId);
-  //   if (tempUserId != null) {
-  //     _userId = tempUserId;
-  //   } else {
-  //     // Handle the situation when userId is null. Maybe show a message to the user or redirect them to the login screen.
-  //   }
-  //   // defined and default was 'en'R
-  //   _userLanguage = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
-  // }
-
   Future<void> _handleSubmitted(String text) async {
+    Logger().i(text);
     if (_currentChat == null) {
       print("Error: _currentChat is null");
+      // You might want to show an error message to the user or initialize the chat here.
       return;
     }
 

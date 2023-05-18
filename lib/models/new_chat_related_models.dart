@@ -1,38 +1,63 @@
 class User {
-  final String uid;
-  final String email;
-  final String displayName;
-  final String photoURL;
-  final DateTime createdAt;
+  final String userId;
+  final String fullName;
+  final String username;
+  final String emailOrPhone;
+  final String dateOfBirth;
+  final String bio;
+  final String peopleDining;
+  final String? securityCode;
+  final String currentChatId; // Add this line
 
   User({
-    required this.uid,
-    required this.email,
-    required this.displayName,
-    required this.photoURL,
-    required this.createdAt,
+    required this.userId,
+    required this.fullName,
+    required this.username,
+    required this.emailOrPhone,
+    required this.dateOfBirth,
+    required this.bio,
+    required this.peopleDining,
+    this.securityCode,
+    required this.currentChatId, // And this line
   });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      userId: json['userId'],
+      fullName: json['full_name'],
+      username: json['username'],
+      emailOrPhone: json['email_or_phone'],
+      dateOfBirth: json['date_of_birth'],
+      bio: json['bio'],
+      peopleDining: json['people_dining'],
+      securityCode: json['security_code'],
+      currentChatId: json['current_chat_id'], // And this line
+    );
+  }
 }
 
 class Chat {
   final String chatId;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String userId;
+  final List<Message> messages;
 
   Chat({
     required this.chatId,
     required this.createdAt,
     required this.updatedAt,
-    required this.userId,
+    required this.messages,
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
+    var messagesFromJson = json['messages'] as List;
+    List<Message> messageList = messagesFromJson.map((i) => Message.fromJson(i)).toList();
+
     return Chat(
       chatId: json['chatId'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      userId: json['userId'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      messages: messageList,
     );
   }
 }

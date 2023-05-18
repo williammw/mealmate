@@ -1,6 +1,7 @@
 // Import required packages
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import 'models/new_chat_related_models.dart';
 
@@ -41,23 +42,29 @@ class Api {
     }
   }
 
-  Future<UserDetails?> getUserDetails() async {
-    try {
-      final response = await http.get(
-        Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_details'),
-      );
+  Future<User> getUserDetails(String uid) async {
+    final response = await http.get(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_details?uid=$uid'),
+    );
 
-      if (response.statusCode == 200) {
-        Map<String, dynamic> body = jsonDecode(response.body);
-        return UserDetails.fromJson(body);
-      } else {
-        print('Error: getUserDetails response status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        throw Exception('Failed to load user details');
-      }
-    } catch (e) {
-      print('Error: getUserDetails failed with error: $e');
-      throw e;
+    if (response.statusCode == 200) {
+      print('Response data: ${response.body}');
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user details');
+    }
+  }
+
+  static Future<Chat> getChat(String chatId, String userId) async {
+    Logger().d('getChat $chatId   $userId');
+    final response = await http.get(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_chat?chat_id=$chatId&user_id=$userId'),
+    );
+
+    if (response.statusCode == 200) {
+      return Chat.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load chat');
     }
   }
 
