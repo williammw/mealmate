@@ -48,6 +48,32 @@ class Message {
     required this.processed,
     required this.chatId,
   });
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      messageId: json['message_id'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      type: json['type'],
+      content: json['content'],
+      sender: json['sender'],
+      processed: json['processed'],
+      chatId: json['chat_id'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message_id': messageId,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'type': type,
+      'content': content,
+      'sender': sender,
+      'processed': processed,
+      'chat_id': chatId,
+    };
+  }
 }
 
 class Response {

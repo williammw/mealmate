@@ -103,4 +103,47 @@ class Api {
       throw Exception('Failed to save user data');
     }
   }
+
+  Future<List<Message>> getMessagesForChat(String chatId, int limit) async {
+    final response = await http.post(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_messages_for_chat'),
+      body: jsonEncode({
+        'chat_id': chatId,
+        'limit': limit,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      return body.map((dynamic item) => Message.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load messages for chat');
+    }
+  }
+
+  //
+  Future<Message> sendMessage(Message message) async {
+    final response = await http.post(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/send_message'),
+      body: jsonEncode(message.toJson()),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      return Message(
+        messageId: responseBody['message_id'],
+        createdAt: DateTime.parse(responseBody['created_at']),
+        updatedAt: DateTime.parse(responseBody['updated_at']),
+        type: message.type, // assuming you have these fields in the response
+        content: message.content,
+        sender: message.sender,
+        processed: responseBody['processed'],
+        chatId: message.chatId,
+      );
+    } else {
+      throw Exception('Failed to send message');
+    }
+  }
 }
