@@ -41,6 +41,26 @@ class Api {
     }
   }
 
+  Future<UserDetails?> getUserDetails() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_details'),
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> body = jsonDecode(response.body);
+        return UserDetails.fromJson(body);
+      } else {
+        print('Error: getUserDetails response status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to load user details');
+      }
+    } catch (e) {
+      print('Error: getUserDetails failed with error: $e');
+      throw e;
+    }
+  }
+
   static Future<List<dynamic>> getChats(String userId) async {
     final response = await http.get(
       Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_chats?user_id=$userId'),

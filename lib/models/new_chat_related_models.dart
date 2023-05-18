@@ -26,6 +26,15 @@ class Chat {
     required this.updatedAt,
     required this.userId,
   });
+
+  factory Chat.fromJson(Map<String, dynamic> json) {
+    return Chat(
+      chatId: json['chatId'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      userId: json['userId'],
+    );
+  }
 }
 
 class Message {
@@ -104,4 +113,21 @@ class Summary {
     required this.content,
     required this.chatId,
   });
+}
+
+class UserDetails {
+  final String userId;
+  final Chat currentChat;
+
+  UserDetails({
+    required this.userId,
+    required this.currentChat,
+  });
+
+  factory UserDetails.fromJson(Map<String, dynamic> json) {
+    return UserDetails(
+      userId: json['user_id'],
+      currentChat: Chat.fromJson(json['current_chat']),
+    );
+  }
 }

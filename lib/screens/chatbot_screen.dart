@@ -21,15 +21,36 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   List<Message> _chatHistory = [];
   String _currentInput = '';
   Chat? _currentChat;
-  final _textController = TextEditingController();
+  late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
-    Future.wait([
-      _initializeUserData(),
-      _initializeChatData(),
-    ]);
+    _textController = TextEditingController();
+    _initializeUserAndChat();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeUserAndChat() async {
+    // Fetch user details and current chat from your backend
+    var userDetails = await Api().getUserDetails();
+
+    if (userDetails != null) {
+      setState(() {
+        _userId = userDetails.userId;
+        _currentChat = Chat(
+          chatId: userDetails.currentChat.chatId,
+          createdAt: userDetails.currentChat.createdAt,
+          updatedAt: userDetails.currentChat.updatedAt,
+          userId: _userId,
+        );
+      });
+    }
   }
 
   Future<void> _loadMessages() async {
@@ -40,38 +61,43 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  Future<void> _initializeChatData() async {
-    List<Chat> userChats = await Auth().getChatsForUser(_userId);
-    var chatData = await Api.createNewChat(_userId);
+  // Future<void> _initializeChatData() async {
+  //   List<Chat> userChats = await Auth().getChatsForUser(_userId);
+  //   var chatData = await Api.createNewChat(_userId);
 
-    if (chatData.containsKey('chat_id')) {
-      _currentChat = Chat(
-        chatId: chatData['chat_id'],
-        createdAt: DateTime.parse(chatData['created_at']),
-        updatedAt: DateTime.parse(chatData['updated_at']),
-        userId: _userId,
-      );
-    } else {
-      var userChats = await Auth().getChatsForUser(_userId);
-      if (userChats.isNotEmpty) {
-        _currentChat = userChats.first;
-      }
-    }
-  }
+  //   if (chatData.containsKey('chat_id')) {
+  //     _currentChat = Chat(
+  //       chatId: chatData['chat_id'],
+  //       createdAt: DateTime.parse(chatData['created_at']),
+  //       updatedAt: DateTime.parse(chatData['updated_at']),
+  //       userId: _userId,
+  //     );
+  //   } else {
+  //     var userChats = await Auth().getChatsForUser(_userId);
+  //     if (userChats.isNotEmpty) {
+  //       _currentChat = userChats.first;
+  //     }
+  //   }
+  // }
 
-  Future<void> _initializeUserData() async {
-    String? tempUserId = await Auth().getUserId();
-    print(tempUserId);
-    if (tempUserId != null) {
-      _userId = tempUserId;
-    } else {
-      // Handle the situation when userId is null. Maybe show a message to the user or redirect them to the login screen.
-    }
-    // defined and default was 'en'R
-    _userLanguage = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
-  }
+  // Future<void> _initializeUserData() async {
+  //   String? tempUserId = await Auth().getUserId();
+  //   print(tempUserId);
+  //   if (tempUserId != null) {
+  //     _userId = tempUserId;
+  //   } else {
+  //     // Handle the situation when userId is null. Maybe show a message to the user or redirect them to the login screen.
+  //   }
+  //   // defined and default was 'en'R
+  //   _userLanguage = Provider.of<LanguageProvider>(context, listen: false).currentLanguage;
+  // }
 
   Future<void> _handleSubmitted(String text) async {
+    if (_currentChat == null) {
+      print("Error: _currentChat is null");
+      return;
+    }
+
     _textController.clear();
 
     // Do something with the text message
@@ -102,35 +128,37 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Chatbot'),
-      ),
-      body: Column(
-        children: <Widget>[
-          // This Flexible widget contains the ListView for chat messages.
-          Flexible(
-            child: ListView.builder(
-              padding: EdgeInsets.all(8.0),
-              reverse: true, // To keep the latest messages at the bottom
-              itemCount: _chatHistory.length,
-              itemBuilder: (_, int index) {
-                var message = _chatHistory[index];
-                return ListTile(
-                  title: Text(message.content),
-                  subtitle: Text('Sent at ${message.createdAt}'),
-                );
-              },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Chatbot'),
+        ),
+        body: Column(
+          children: <Widget>[
+            // This Flexible widget contains the ListView for chat messages.
+            Flexible(
+              child: ListView.builder(
+                padding: EdgeInsets.all(8.0),
+                reverse: true, // To keep the latest messages at the bottom
+                itemCount: _chatHistory.length,
+                itemBuilder: (_, int index) {
+                  var message = _chatHistory[index];
+                  return ListTile(
+                    title: Text(message.content),
+                    subtitle: Text('Sent at ${message.createdAt}'),
+                  );
+                },
+              ),
             ),
-          ),
-          // A divider to separate the chat area and the text input field.
-          Divider(height: 1.0),
-          // The container for the text input field.
-          Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _buildTextComposer(),
-          ),
-        ],
+            // A divider to separate the chat area and the text input field.
+            Divider(height: 1.0),
+            // The container for the text input field.
+            Container(
+              decoration: BoxDecoration(color: Theme.of(context).cardColor),
+              child: _buildTextComposer(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -153,9 +181,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
             // The send button.
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.paperPlane),
+                icon: const FaIcon(FontAwesomeIcons.paperPlane),
                 onPressed: () => _handleSubmitted(_textController.text),
               ),
             ),
