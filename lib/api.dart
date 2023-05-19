@@ -156,9 +156,11 @@ class Api {
 
   //
   Future<Message> sendMessage(Message message) async {
+    print('||sendMessage||');
+    print(message.content);
     final response = await http.post(
       Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/send_message'),
-      body: jsonEncode(message.toJson()),
+      body: jsonEncode(message.content),
       headers: {'Content-Type': 'application/json'},
     );
 
