@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
@@ -43,29 +46,56 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     Logger().d('tempUserId   $tempUserId');
 
     // Fetch user details and current chat from your backend
-    var userDetails = await Api().getUserDetails(tempUserId!);
+    User userDetails = await Api().getUserDetails(tempUserId!);
+    // User userDetails = User.fromJson(userDetailsMap);
+
     Logger().d('userDetails $userDetails');
 
     // Assuming the User object contains the current chat ID.
+    userDetails.currentChatId = _currentChat!.chatId;
     String currentChatId = userDetails.currentChatId;
 
     // Now get the current chat using the chat ID
     Logger().d('getChat pass $currentChatId $tempUserId');
 
-    try {
-      _currentChat = await Api.getChat(currentChatId, tempUserId);
-      // You also need to load the chat messages for this chat
-      await _loadMessages();
-    } catch (e) {
-      Logger().d('No chat found for this user, creating a new chat.');
-      var newChatResponse = await Api.createNewChat(tempUserId);
-      // Handle the new chat response. It should include chatId which you can use to set _currentChat.
-      // You may need to modify your backend to return the created chatId in the response.
-      // _currentChat = Chat.fromJson(newChatResponse);
+    if (currentChatId != null) {
+      try {
+        _currentChat = await Api.getChat(currentChatId, tempUserId);
+      } catch (e) {
+        Logger().d('No chat found for this user, creating a new chat.');
+        _currentChat = await _createNewChat(tempUserId, userDetails);
+      }
+    } else {
+      Logger().d('No current chat for this user, creating a new chat.');
+      _currentChat = await _createNewChat(tempUserId, userDetails);
     }
+
+    // You also need to load the chat messages for this chat, if any
+    await _loadMessages();
+  }
+
+  Future<Chat> _createNewChat(String tempUserId, User user) async {
+    print('Getting UserId: $tempUserId');
+    var newChatResponse = await Api.createNewChat(tempUserId);
+    print('Created New Chat: $newChatResponse');
+    Chat newChat = Chat(
+      chatId: newChatResponse['chatId'],
+      createdAt: DateTime.parse(newChatResponse['chat']['createdAt']),
+      updatedAt: DateTime.parse(newChatResponse['chat']['updatedAt']),
+      messages: [],
+    );
+
+    // update the user details with new chatId
+    user.currentChatId = newChat.chatId;
+    await Api.updateUserDetails(tempUserId, user);
+    return newChat;
   }
 
   Future<void> _loadMessages() async {
+    if (_currentChat == null || _currentChat!.messages.isEmpty) {
+      return;
+    }
+
     Api api = Api();
     var messages = await api.getMessagesForChat(_currentChat!.chatId, 20);
     setState(() {
@@ -74,18 +104,60 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _handleSubmitted(String text) async {
-    Logger().i(text);
+    print(text);
+
     if (_currentChat == null) {
-      print("Error: _currentChat is null");
-      // You might want to show an error message to the user or initialize the chat here.
-      return;
+      print("No chat initialized. Creating a new chat...");
+      // Create a new chat
+      try {
+        String tempUserId = await Auth().getUserId() ?? '';
+        print('Getting UserId: $tempUserId');
+        var newChatResponse = await Api.createNewChat(tempUserId);
+        print('Created New Chat: $newChatResponse');
+        Logger().d(newChatResponse);
+        Logger().d(newChatResponse['chatId']);
+        _currentChat = Chat(
+          chatId: newChatResponse['chatId'],
+          createdAt: HttpDate.parse(newChatResponse['chat']['createdAt']),
+          updatedAt: HttpDate.parse(newChatResponse['chat']['updatedAt']),
+          messages: [
+            Message(
+              messageId: "some_initial_id",
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+              type: "text",
+              content: newChatResponse['message'],
+              sender: "user",
+              processed: true,
+              chatId: newChatResponse['chatId'],
+            )
+          ],
+        );
+        print('Chat created successfully');
+        print(_currentChat!.chatId);
+
+        // Update the user details with new chatId
+        User updatedUser = User(
+          userId: tempUserId,
+          fullName: 'test' /* you'll need to provide this value */,
+          username: 'wwwwwmw' /* you'll need to provide this value */,
+          emailOrPhone: 'william.manwai@gmail.com' /* you'll need to provide this value */,
+          dateOfBirth: '1986-08-24' /* you'll need to provide this value */,
+          bio: 'super strong engineer in the world' /* you'll need to provide this value */,
+          peopleDining: '2' /* you'll need to provide this value */,
+          securityCode: '215548' /* you'll need to provide this value */,
+          currentChatId: _currentChat!.chatId,
+        );
+        print('Updated User created successfully');
+        await Api.updateUserDetails(tempUserId, updatedUser);
+        print('Updated User details successfully');
+      } catch (e) {
+        Logger().e('Failed to create a new chat. Error: $e');
+        return;
+      }
     }
 
     _textController.clear();
-
-    // Do something with the text message
-    // For example, you can send the message to the server
-    // and add the message to the chat history.
 
     // Step 1: Create a new Message object.
     Message newMessage = Message(
@@ -100,12 +172,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
 
     // Step 2: Send the message to the server.
-    // Replace this with your actual function to send the message to your server.
+    print('Sending message to server...');
     await Api().sendMessage(newMessage);
+    print('Message sent to server.');
 
     // Step 3: Add the new message to the chat history.
     setState(() {
+      print('Adding message to chat history...');
       _chatHistory.insert(0, newMessage);
+      print('Message added to chat history.');
     });
   }
 

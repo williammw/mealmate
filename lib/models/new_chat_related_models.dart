@@ -7,7 +7,7 @@ class User {
   final String bio;
   final String peopleDining;
   final String? securityCode;
-  final String currentChatId; // Add this line
+  String currentChatId;
 
   User({
     required this.userId,
@@ -18,7 +18,7 @@ class User {
     required this.bio,
     required this.peopleDining,
     this.securityCode,
-    required this.currentChatId, // And this line
+    required this.currentChatId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -31,8 +31,22 @@ class User {
       bio: json['bio'],
       peopleDining: json['people_dining'],
       securityCode: json['security_code'],
-      currentChatId: json['current_chat_id'], // And this line
+      currentChatId: json['current_chat_id'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'full_name': fullName,
+      'username': username,
+      'email_or_phone': emailOrPhone,
+      'date_of_birth': dateOfBirth,
+      'bio': bio,
+      'people_dining': peopleDining,
+      'security_code': securityCode,
+      'current_chat_id': currentChatId,
+    };
   }
 }
 
@@ -154,5 +168,12 @@ class UserDetails {
       userId: json['user_id'],
       currentChat: Chat.fromJson(json['current_chat']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': this.userId,
+      'current_chat_id': this.currentChat.chatId,
+    };
   }
 }

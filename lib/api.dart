@@ -80,6 +80,7 @@ class Api {
   }
 
   static Future<Map<String, dynamic>> createNewChat(String userId) async {
+    print('createNewChat userId: $userId');
     final response = await http.post(
       Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/create_new_chat'),
       body: jsonEncode({'user_id': userId}),
@@ -87,8 +88,12 @@ class Api {
     );
 
     if (response.statusCode == 200) {
+      print('createNewChar in Flutter response in 200 code');
       return jsonDecode(response.body);
     } else {
+      // Log or handle the error message here
+      print('Server responded with status code: ${response.statusCode}');
+      print('Server response body: ${response.body}');
       throw Exception('Failed to create a new chat');
     }
   }
@@ -172,5 +177,27 @@ class Api {
     } else {
       throw Exception('Failed to send message');
     }
+  }
+
+  static Future<void> updateUserDetails(String userId, User user) async {
+    print('Starting to update user details...');
+
+    final response = await http.put(
+      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/update_user_details'),
+      body: jsonEncode({
+        'user_id': userId,
+        'user_details': user.toJson(),
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    print('Update response status: ${response.statusCode}');
+
+    if (response.statusCode != 200) {
+      print('Response body: ${response.body}');
+      throw Exception('Failed to update user details');
+    }
+
+    print('User details updated successfully');
   }
 }
