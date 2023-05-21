@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../api.dart';
 import 'login_screen.dart';
 
@@ -60,13 +61,15 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                   onPressed: () async {
                     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
                       print('Form validation passed');
+                      const storage = FlutterSecureStorage();
+                      final String? authToken = await storage.read(key: 'authToken');
 
                       try {
                         // Call the API to verify the security code
                         final result = await Api.verifySecurityCode(
                           widget.userData['email_or_phone']!,
                           _confirmationCodeController.text,
-                          widget.userData['auth_token']!,
+                          authToken!,
                         );
 
                         if (result) {
