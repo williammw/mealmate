@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 
 import '../api.dart';
@@ -67,15 +68,16 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
                     );
-                    if (picked != null)
+                    if (picked != null) {
                       setState(() {
                         _dobController.text = picked.toIso8601String().substring(0, 10);
                       });
+                    }
                   },
                   child: IgnorePointer(
                     child: TextFormField(
                       controller: _dobController,
-                      decoration: InputDecoration(hintText: 'YYYY-MM-DD'),
+                      decoration: const InputDecoration(hintText: 'YYYY-MM-DD'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a valid date';
@@ -124,7 +126,10 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
 
                       if (isSignedUp) {
                         // Save user data using the API
-                        await Api.saveUserData(widget.userData['email_or_phone']!, securityCode);
+                        const storage = FlutterSecureStorage();
+                        final String? authToken = await storage.read(key: 'authToken');
+                        Logger().i(authToken);
+                        await Api.saveUserData(widget.userData['email_or_phone']!, securityCode, authToken!);
 
                         // Navigate to the next screen
                         Navigator.push(

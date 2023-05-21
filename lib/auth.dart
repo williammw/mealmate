@@ -37,7 +37,7 @@ class Auth {
   }
 
   Future<bool> signup(String emailOrPhone, String password, String username, String fullName, DateTime dob, int peopleDining) async {
-    Logger().i('signUP!! $emailOrPhone , $password, $username, $fullName, $dob, $peopleDining');
+    Logger().i('/signup $emailOrPhone , $password, $username, $fullName, $dob, $peopleDining');
     try {
       final response = await http.post(
         Uri.parse('$apiUrl/signup'),
@@ -56,8 +56,8 @@ class Auth {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        String userId = responseBody['user'] ?? '';
-
+        String userId = responseBody['user_id'] ?? '';
+        Logger().d('signup responseBody[user_id] $userId');
         await storage.write(key: 'authToken', value: userId);
         return true;
       } else {

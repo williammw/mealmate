@@ -66,6 +66,7 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                         final result = await Api.verifySecurityCode(
                           widget.userData['email_or_phone']!,
                           _confirmationCodeController.text,
+                          widget.userData['auth_token']!,
                         );
 
                         if (result) {

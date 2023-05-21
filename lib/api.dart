@@ -14,14 +14,14 @@ class Api {
   static void changeLanguage(String newLanguage) {}
 
   // Modify the verifySecurityCode method to return a boolean value
-  static Future<bool> verifySecurityCode(String email, String securityCode) async {
-    print('Email: $email');
-    print('Security Code: $securityCode');
+  static Future<bool> verifySecurityCode(String email, String securityCode, String authToken) async {
+    print('verifySecurityCode Email: $email');
+    print('verifySecurityCode Security Code: $securityCode');
     try {
       final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/verify_security_code'), // Replace with your API endpoint
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'email': email, 'security_code': securityCode},
+        body: {'email': email, 'security_code': securityCode, 'auth_token': authToken},
       );
 
       print('Response status code: ${response.statusCode}');
@@ -148,11 +148,11 @@ class Api {
   }
 
   // Save user data using the API
-  static Future<void> saveUserData(String email, String securityCode) async {
+  static Future<void> saveUserData(String email, String securityCode, String authToken) async {
     final response = await http.post(
       Uri.parse('${dotenv.env['API_URL']}/save_user_data'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'email': email, 'security_code': securityCode},
+      body: {'email': email, 'security_code': securityCode, 'auth_token': authToken},
     );
 
     if (response.statusCode != 200) {
