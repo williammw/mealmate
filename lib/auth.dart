@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'models/new_chat_related_models.dart';
 
 class Auth {
-  final String apiUrl = 'https://starfish-app-rk6pn.ondigitalocean.app';
+  final String? apiUrl = dotenv.env['API_URL'];
   // final String apiUrl = 'http://127.0.0.1:5000/';
 
   final storage = const FlutterSecureStorage();
@@ -21,6 +22,7 @@ class Auth {
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
       String userId = responseBody['user'];
+      print('responseBody $responseBody');
       print('/login $userId');
       await storage.write(key: 'authToken', value: userId);
       return true;

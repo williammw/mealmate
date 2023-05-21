@@ -7,6 +7,7 @@ class User {
   final String bio;
   final String peopleDining;
   final String? securityCode;
+  final String avatarURL; // New field for avatar
   String currentChatId;
 
   User({
@@ -18,6 +19,7 @@ class User {
     required this.bio,
     required this.peopleDining,
     this.securityCode,
+    required this.avatarURL, // New field for avatar
     required this.currentChatId,
   });
 
@@ -31,6 +33,7 @@ class User {
       bio: json['bio'],
       peopleDining: json['people_dining'],
       securityCode: json['security_code'],
+      avatarURL: json['avatar_url'], // New field for avatar
       currentChatId: json['current_chat_id'],
     );
   }
@@ -45,13 +48,14 @@ class User {
       'bio': bio,
       'people_dining': peopleDining,
       'security_code': securityCode,
+      'avatar_url': avatarURL, // New field for avatar
       'current_chat_id': currentChatId,
     };
   }
 }
 
 class Chat {
-  final String chatId;
+  late final String chatId;
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<Message> messages;

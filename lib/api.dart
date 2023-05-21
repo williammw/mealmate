@@ -1,5 +1,6 @@
 // Import required packages
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -18,7 +19,7 @@ class Api {
     print('Security Code: $securityCode');
     try {
       final response = await http.post(
-        Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/verify_security_code'), // Replace with your API endpoint
+        Uri.parse('${dotenv.env['API_URL']}/verify_security_code'), // Replace with your API endpoint
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'email': email, 'security_code': securityCode},
       );
@@ -42,13 +43,35 @@ class Api {
     }
   }
 
+  static Future<void> storeMessage(String userId, String chatId, Message message) async {
+    print('UserId: $userId');
+    print('ChatId: $chatId');
+    print('Message: ${message.toJson()}');
+
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/store_message'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': userId,
+        'chat_id': chatId,
+        'message': message.toJson(), // Assuming your Message model has a method to convert it to JSON
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      print('Server responded with status code: ${response.statusCode}');
+      print('Server response body: ${response.body}');
+      throw Exception('Failed to store message');
+    }
+  }
+
   Future<User> getUserDetails(String uid) async {
     final response = await http.get(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_details?uid=$uid'),
+      Uri.parse('${dotenv.env['API_URL']}/get_user_details?uid=$uid'),
     );
 
     if (response.statusCode == 200) {
-      print('Response data: ${response.body}');
+      print('getUserDetails Response data: ${response.body}');
       return User.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load user details');
@@ -58,7 +81,7 @@ class Api {
   static Future<Chat> getChat(String chatId, String userId) async {
     Logger().d('getChat $chatId   $userId');
     final response = await http.get(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_chat?chat_id=$chatId&user_id=$userId'),
+      Uri.parse('${dotenv.env['API_URL']}/get_chat?chat_id=$chatId&user_id=$userId'),
     );
 
     if (response.statusCode == 200) {
@@ -70,7 +93,7 @@ class Api {
 
   static Future<List<dynamic>> getChats(String userId) async {
     final response = await http.get(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_user_chats?user_id=$userId'),
+      Uri.parse('${dotenv.env['API_URL']}/get_user_chats?user_id=$userId'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['chats'];
@@ -82,7 +105,7 @@ class Api {
   static Future<Map<String, dynamic>> createNewChat(String userId) async {
     print('createNewChat userId: $userId');
     final response = await http.post(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/create_new_chat'),
+      Uri.parse('${dotenv.env['API_URL']}/create_new_chat'),
       body: jsonEncode({'user_id': userId}),
       headers: {'Content-Type': 'application/json'},
     );
@@ -100,7 +123,7 @@ class Api {
 
   static Future<String> getDefaultMessage(String languageCode) async {
     print('languageCode: $languageCode');
-    var url = Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_default_message');
+    var url = Uri.parse('${dotenv.env['API_URL']}/get_default_message');
     var response = await http.post(
       url,
       headers: <String, String>{
@@ -126,7 +149,7 @@ class Api {
   // Save user data using the API
   static Future<void> saveUserData(String email, String securityCode) async {
     final response = await http.post(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/save_user_data'),
+      Uri.parse('${dotenv.env['API_URL']}/save_user_data'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {'email': email, 'security_code': securityCode},
     );
@@ -138,7 +161,7 @@ class Api {
 
   Future<List<Message>> getMessagesForChat(String chatId, int limit) async {
     final response = await http.post(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/get_messages_for_chat'),
+      Uri.parse('${dotenv.env['API_URL']}/get_messages_for_chat'),
       body: jsonEncode({
         'chat_id': chatId,
         'limit': limit,
@@ -155,27 +178,31 @@ class Api {
   }
 
   //
-  Future<Message> sendMessage(Message message) async {
+  Future<Message> sendMessage(Message message, String languageCode) async {
     print('||sendMessage||');
     print(message.content);
     final response = await http.post(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/send_message'),
-      body: jsonEncode(message.content),
+      Uri.parse('${dotenv.env['API_URL']}/send_message'),
+      body: jsonEncode({'message': message.content, 'language_code': languageCode}),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
-      return Message(
-        messageId: responseBody['message_id'],
-        createdAt: DateTime.parse(responseBody['created_at']),
-        updatedAt: DateTime.parse(responseBody['updated_at']),
-        type: message.type, // assuming you have these fields in the response
-        content: message.content,
-        sender: message.sender,
-        processed: responseBody['processed'],
+      print(responseBody['response']);
+      // Create a new Message object for the bot's response.
+      Message botMessage = Message(
+        messageId: 'bot', // A placeholder ID.
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        type: 'text',
+        content: responseBody['response'], // Get the response from the server.
+        sender: 'bot', // A placeholder sender.
+        processed: true,
         chatId: message.chatId,
       );
+
+      return botMessage;
     } else {
       throw Exception('Failed to send message');
     }
@@ -185,7 +212,7 @@ class Api {
     print('Starting to update user details...');
 
     final response = await http.put(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/update_user_details'),
+      Uri.parse('${dotenv.env['API_URL']}/update_user_details'),
       body: jsonEncode({
         'user_id': userId,
         'user_details': user.toJson(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:logger/logger.dart';
@@ -31,7 +32,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
   Map<String, PreviewData> datas = {};
   // Map<String, String> _headers = {'Content-Type': 'application/json'};
   final List<ChatMessage> _messages = [];
-  final String currentChatId = Uuid().v4(); // Generate a unique ID for the current chat
+  final String currentChatId = const Uuid().v4(); // Generate a unique ID for the current chat
   final List<bool> _isUserMessage = [];
   final ScrollController _scrollController = ScrollController();
   String _response = '';
@@ -90,7 +91,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     });
 
     final response = await http.post(
-      Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/send_message'),
+      Uri.parse('${dotenv.env['API_URL']}/send_message'),
       body: json.encode({
         'message': message,
         'language_code': languageCode,
@@ -99,8 +100,8 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
         'Content-Type': 'application/json',
       },
     );
-    var uuid = Uuid().v4();
-    var uuid2 = Uuid().v4();
+    var uuid = const Uuid().v4();
+    var uuid2 = const Uuid().v4();
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final aiResponse = jsonResponse['response'];
@@ -155,7 +156,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     if (userId != null) {
       try {
         final response = await http.post(
-          Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/store_message'),
+          Uri.parse('${dotenv.env['API_URL']}/store_message'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -189,7 +190,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     String? userId = await Auth().getUserId();
     if (userId != null) {
       final response = await http.post(
-        Uri.parse('https://starfish-app-rk6pn.ondigitalocean.app/store_message'),
+        Uri.parse('${dotenv.env['API_URL']}/store_message'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
