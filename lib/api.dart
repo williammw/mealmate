@@ -66,6 +66,7 @@ class Api {
   }
 
   Future<User> getUserDetails(String uid) async {
+    print(dotenv.env['API_URL']);
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/get_user_details?uid=$uid'),
     );

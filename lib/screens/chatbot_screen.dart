@@ -49,7 +49,22 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     User userDetails = await Api().getUserDetails(tempUserId!);
     // User userDetails = User.fromJson(userDetailsMap);
 
-    Logger().d('User Details ididid: ${userDetails.currentChatId}');
+/**
+ * {
+ * userId: 2nQvJGf2XMUJqNnDp4ZCl9EJdOc2, 
+ * full_name: test, 
+ * username: wwwwwmw, 
+ * email_or_phone: william.manwai@gmail.com, 
+ * date_of_birth: 1986-08-24, 
+ * bio: super strong engineer in the world, 
+ * people_dining: 2, 
+ * security_code: 215548, 
+ * avatar_url: https://i.pravatar.cc/300, 
+ * current_chat_id: 526cd281-cf43-488e-91e3-baf1a66e3130} 
+ */
+
+    // Logger().d('User Details ididid: ${userDetails.toJson()}');
+    Logger().d('User Details currentChatId: ${userDetails.currentChatId}');
 
     if (_currentChat != null) {
       userDetails.currentChatId = _currentChat!.chatId;

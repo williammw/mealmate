@@ -58,15 +58,31 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Enter your date of birth:'),
-                TextFormField(
-                  controller: _dobController,
-                  decoration: const InputDecoration(hintText: 'YYYY-MM-DD'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a valid date';
-                    }
-                    return null;
+                InkWell(
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: _dobController.text.isNotEmpty ? DateTime.parse(_dobController.text) : DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (picked != null)
+                      setState(() {
+                        _dobController.text = picked.toIso8601String().substring(0, 10);
+                      });
                   },
+                  child: IgnorePointer(
+                    child: TextFormField(
+                      controller: _dobController,
+                      decoration: InputDecoration(hintText: 'YYYY-MM-DD'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a valid date';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16.0),
                 const Text('Enter the number of people you dine with:'),

@@ -17,7 +17,7 @@ import 'screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
-  await dotenv.load();
+  await dotenv.load(fileName: '.env.prod');
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
