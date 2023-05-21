@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import 'models/new_chat_related_models.dart';
 
@@ -35,8 +36,8 @@ class Auth {
     return await storage.read(key: 'authToken');
   }
 
-  Future<bool> signup(String emailOrPhone, String password, String displayName, String fullName, DateTime dob, int peopleDining) async {
-    print('signUP!!');
+  Future<bool> signup(String emailOrPhone, String password, String username, String fullName, DateTime dob, int peopleDining) async {
+    Logger().i('signUP!! $emailOrPhone , $password, $username, $fullName, $dob, $peopleDining');
     try {
       final response = await http.post(
         Uri.parse('$apiUrl/signup'),
@@ -45,7 +46,7 @@ class Auth {
           {
             'email_or_phone': emailOrPhone,
             'full_name': fullName,
-            'username': displayName,
+            'username': username,
             'password': password,
             'date_of_birth': dob.toIso8601String(),
             'people_dining': peopleDining.toString(),
@@ -55,7 +56,7 @@ class Auth {
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
-        String userId = responseBody['user'];
+        String userId = responseBody['user'] ?? '';
 
         await storage.write(key: 'authToken', value: userId);
         return true;

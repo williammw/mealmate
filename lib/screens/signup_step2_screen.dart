@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 import '../api.dart';
 import '../auth.dart';
@@ -111,10 +112,11 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       Auth auth = Auth();
 
                       // Call the signup method from the Auth class
+                      // Logger().i(widget.userData);
                       bool isSignedUp = await auth.signup(
                         widget.userData['email_or_phone'] ?? '',
                         widget.userData['password'] ?? '',
-                        widget.userData['display_name'] ?? '',
+                        widget.userData['username'] ?? '',
                         widget.userData['full_name'] ?? '',
                         DateTime.parse(widget.userData['dob'] ?? '1970-01-01'),
                         int.parse(widget.userData['dining_with'] ?? '0'),
