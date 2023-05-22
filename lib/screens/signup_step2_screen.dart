@@ -105,7 +105,6 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                     if (_formKey.currentState!.validate()) {
                       // Generate a security code
                       String securityCode = _generateSecurityCode();
-
                       // Add additional information to userData
                       widget.userData['dob'] = _dobController.text;
                       widget.userData['dining_with'] = _diningWithController.text;

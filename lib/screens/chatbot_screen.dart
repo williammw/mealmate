@@ -49,21 +49,21 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     User userDetails = await Api().getUserDetails(tempUserId!);
     // User userDetails = User.fromJson(userDetailsMap);
 
-/**
- * {
- * userId: 2nQvJGf2XMUJqNnDp4ZCl9EJdOc2, 
- * full_name: test, 
- * username: wwwwwmw, 
- * email_or_phone: william.manwai@gmail.com, 
- * date_of_birth: 1986-08-24, 
- * bio: super strong engineer in the world, 
- * people_dining: 2, 
- * security_code: 215548, 
- * avatar_url: https://i.pravatar.cc/300, 
- * current_chat_id: 526cd281-cf43-488e-91e3-baf1a66e3130} 
- */
+    /**
+     * {
+     * userId: 2nQvJGf2XMUJqNnDp4ZCl9EJdOc2, 
+     * full_name: test, 
+     * username: wwwwwmw, 
+     * email_or_phone: william.manwai@gmail.com, 
+     * date_of_birth: 1986-08-24, 
+     * bio: super strong engineer in the world, 
+     * people_dining: 2, 
+     * security_code: 215548, 
+     * avatar_url: https://i.pravatar.cc/300, 
+     * current_chat_id: 526cd281-cf43-488e-91e3-baf1a66e3130} 
+     */
 
-    // Logger().d('User Details ididid: ${userDetails.toJson()}');
+    Logger().d('All User Details userDetails : ${userDetails.toJson()}');
     Logger().d('User Details currentChatId: ${userDetails.currentChatId}');
 
     if (_currentChat != null) {
@@ -157,15 +157,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         // Update the user details with new chatId
         User updatedUser = User(
           userId: tempUserId,
-          fullName: 'test' /* you'll need to provide this value */,
-          username: 'wwwwwmw' /* you'll need to provide this value */,
-          emailOrPhone: 'william.manwai@gmail.com' /* you'll need to provide this value */,
-          dateOfBirth: '1986-08-24' /* you'll need to provide this value */,
-          bio: 'super strong engineer in the world' /* you'll need to provide this value */,
-          peopleDining: '2' /* you'll need to provide this value */,
-          securityCode: '215548' /* you'll need to provide this value */,
+          fullName: 'test' /* may not have at 1st login */,
+          username: 'wwwwwmw' /*  */,
+          emailOrPhone: 'william.manwai@gmail.com' /*  */,
+          dateOfBirth: '1986-08-24' /*  */,
+          bio: 'super strong engineer in the world' /* may not have at 1st login */,
+          peopleDining: '2' /*  */,
+          securityCode: '215548' /*  */,
           currentChatId: _currentChat!.chatId,
-          avatarURL: 'https://i.pravatar.cc/300',
+          /* may not have at 1st login */
+          avatarURL: 'https://i.pravatar.cc/300', /* may not have at 1st login */
         );
         print('Updated User created successfully');
         await Api.updateUserDetails(tempUserId, updatedUser);
