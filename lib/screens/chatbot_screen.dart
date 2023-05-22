@@ -29,8 +29,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   String _currentInput = '';
   Chat? _currentChat;
   late TextEditingController _textController;
-  final botAvatarUrl = 'https://i.pravatar.cc/300';
-  final userAvatarUrl = 'https://i.pravatar.cc/300';
+  final botAvatarUrl = 'https://i.pravatar.cc/300?u=a042581f4e2902670';
+  final userAvatarUrl = 'https://i.pravatar.cc/300?u=n0283oji';
 
   @override
   void initState() {
@@ -213,12 +213,35 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   return Column(
                     children: <Widget>[
                       ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(isBot ? botAvatarUrl : userAvatarUrl), // Replace with your avatar URLs
+                        contentPadding: EdgeInsets.all(0),
+                        title: Align(
+                          alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(isBot ? botAvatarUrl : userAvatarUrl), // Replace with your avatar URLs
+                          ),
                         ),
-                        title: Text(message.content),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.all(0),
+                        title: Align(
+                          alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isBot ? Colors.grey[200] : Theme.of(context).accentColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            child: Text(
+                              message.content,
+                              style: TextStyle(
+                                color: isBot ? Colors.black : Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                         subtitle: Text(messageTime),
                       ),
+                      Divider(height: 1.0),
                     ],
                   );
                 },
