@@ -160,12 +160,14 @@ class Api {
     }
   }
 
-  Future<List<Message>> getMessagesForChat(String chatId, int limit) async {
-    print('getMessagesForChat called');
+  Future<List<Message>> getMessagesForChat(String userId, String chatId, int limit) async {
+    Logger().i('getMessagesForChat called $userId $chatId $limit');
+
     final response = await http.post(
       Uri.parse('${dotenv.env['API_URL']}/get_messages_for_chat'),
       body: jsonEncode({
         'chat_id': chatId,
+        'user_id': userId,
         'limit': limit,
       }),
       headers: {'Content-Type': 'application/json'},

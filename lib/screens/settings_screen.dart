@@ -16,6 +16,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final List<String> languages = ['en', 'zh-cn', 'zh-tw', 'zh-hk', 'ja'];
+
   void _logout(BuildContext context) async {
     const storage = FlutterSecureStorage();
     String? idToken = await storage.read(key: 'authToken');
@@ -39,6 +41,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _updatePreferredLanguage(String language) async {
+    // final api = Api();
+    UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    User? userDetails = userDetailsProvider.userDetails;
+
+    if (userDetails != null) {
+      // Update the User model with the new preferred language
+      userDetails.preferredLanguage = language;
+      // Update the user details in the backend
+
+      await Api.updateUserDetails(userDetails.userId, userDetails);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +73,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Auth();
+    UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    User? userDetails = userDetailsProvider.userDetails;
+
+    List<String> languages = ['en', 'zh-cn', 'zh-tw', 'zh-hk', 'ja']; // Define the languages
+
     return Scaffold(
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchUserInfo(),
@@ -68,27 +88,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return Text('Error: ${snapshot.error}');
           } else {
             final user = snapshot.data;
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (user!['avatar_url'] != null)
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(user['avatar_url']),
+            if (user != null) {
+              // Return widgets
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (user['avatar_url'] != null)
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(user['avatar_url']),
+                      ),
+                    SizedBox(height: 10),
+                    Text('Full Name: ${user['full_name']}'),
+                    Text('Username: ${user['username']}'),
+                    Text('Email: ${user['email_or_phone']}'),
+                    DropdownButton<String>(
+                      value: user['preferred_language'],
+                      onChanged: (String? newValue) {
+                        if (userDetails != null) {
+                          setState(() {
+                            userDetails.preferredLanguage = newValue!;
+                            _updatePreferredLanguage(newValue);
+                          });
+                        }
+                      },
+                      items: languages.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                  SizedBox(height: 10),
-                  Text('Full Name: ${user!['full_name']}'),
-                  Text('Username: ${user['username']}'),
-                  Text('email: ${user['email_or_phone']}'),
-                  // And so on for the rest of the user attributes...
-                  ElevatedButton(
-                    onPressed: () => _logout(context),
-                    child: const Text('Logout'),
-                  ),
-                ],
-              ),
-            );
+                    ElevatedButton(
+                      onPressed: () => _logout(context),
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              // Return a widget when the user is null
+              return Text('User data not found');
+            }
           }
         },
       ),

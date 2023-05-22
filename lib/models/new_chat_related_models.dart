@@ -9,6 +9,7 @@ class User {
   final String? securityCode;
   final String avatarURL; // New field for avatar
   String currentChatId;
+  String preferredLanguage;
 
   User({
     required this.userId,
@@ -21,6 +22,7 @@ class User {
     this.securityCode,
     required this.avatarURL, // New field for avatar
     required this.currentChatId,
+    this.preferredLanguage = 'en',
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class User {
       securityCode: json['security_code'],
       avatarURL: json['avatar_url'], // New field for avatar
       currentChatId: json['current_chat_id'],
+      preferredLanguage: json['preferred_language'],
     );
   }
 
@@ -50,6 +53,7 @@ class User {
       'security_code': securityCode,
       'avatar_url': avatarURL, // New field for avatar
       'current_chat_id': currentChatId,
+      'preferred_language': preferredLanguage,
     };
   }
 }

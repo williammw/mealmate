@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:mealmate/providers/language_notifer.dart';
@@ -42,6 +43,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _initializeUserAndChat() async {
+    // final storage = const FlutterSecureStorage();
+    // await storage.delete(key: 'authToken');
     Logger().d('Initializing user and chat...');
 
     String? tempUserId = await Auth().getUserId();
@@ -59,20 +62,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     if (userDetails != null) {
       // Use the user details
       Logger().d('UserDetailProvder object assessing ${userDetails.toJson()}');
-      /**
-     * {
-     * userId: 2nQvJGf2XMUJqNnDp4ZCl9EJdOc2, 
-     * full_name: test, 
-     * username: wwwwwmw, 
-     * email_or_phone: william.manwai@gmail.com, 
-     * date_of_birth: 1986-08-24, 
-     * bio: super strong engineer in the world, 
-     * people_dining: 2, 
-     * security_code: 215548, 
-     * avatar_url: https://i.pravatar.cc/300, 
-     * current_chat_id: 526cd281-cf43-488e-91e3-baf1a66e3130} 
-     */
-
       Logger().d('All User Details userDetails : ${userDetails.toJson()}');
       Logger().d('User Details currentChatId: ${userDetails.currentChatId.isEmpty}');
 
@@ -85,26 +74,29 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         // Now get the current chat using the chat ID
         Logger().d('getChat pass $currentChatId $tempUserId');
 
-        if (currentChatId != null) {
-          print('inside111');
-          try {
-            print('insid22222');
-            _currentChat = await Api.getChat(currentChatId, tempUserId);
-          } catch (e) {
-            print('insid333');
-            Logger().d('No chat found for this user, creating a new chat.');
-            _currentChat = await _createNewChat(tempUserId, userDetails);
-          }
-        } else {
-          print('inside444');
-          Logger().d('No current chat for this user, creating a new chat.');
-          _currentChat = await _createNewChat(tempUserId, userDetails);
-        }
+        // if (currentChatId != null) {
+        //   print('inside111');
+        //   try {
+        //     print('insid22222');
+        //     _currentChat = await Api.getChat(currentChatId, tempUserId);
+        //   } catch (e) {
+        //     print('insid333');
+        //     Logger().d('No chat found for this user, creating a new chat.');
+        //     _currentChat = await _createNewChat(tempUserId, userDetails);
+        //   }
+        // } else {
+        //   print('inside444');
+        //   Logger().d('No current chat for this user, creating a new chat.');
+        //   _currentChat = await _createNewChat(tempUserId, userDetails);
+        // }
+        await _loadMessages();
+      } else {
+        Logger().i('No current chat for this user, creating a new chat.');
+        _currentChat = await _createNewChat(tempUserId, userDetails);
       }
       // Assuming the User object contains the current chat ID.
 
       // You also need to load the chat messages for this chat, if any
-      await _loadMessages();
     }
   }
 
@@ -137,7 +129,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       }
 
       Api api = Api();
-      var messages = await api.getMessagesForChat(_currentChat!.chatId, 20);
+      var messages = await api.getMessagesForChat(tempUserId, userDetails.currentChatId, 20);
       setState(() {
         _chatHistory = messages;
       });
@@ -145,74 +137,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _handleSubmitted(String text) async {
-    print('_handleSubmitted $text');
-
-    if (_currentChat == null) {
-      print("No chat initialized. Creating a new chat...");
-      // Create a new chat
-      try {
-        String tempUserId = await Auth().getUserId() ?? '';
-        _userId = tempUserId;
-        print('Getting UserId: $tempUserId');
-        var newChatResponse = await Api.createNewChat(tempUserId);
-        print('Created New Chat: $newChatResponse');
-        Logger().d(newChatResponse);
-        Logger().d(newChatResponse['chatId']);
-        _currentChat = Chat(
-          chatId: newChatResponse['chatId'],
-          createdAt: HttpDate.parse(newChatResponse['chat']['createdAt']),
-          updatedAt: HttpDate.parse(newChatResponse['chat']['updatedAt']),
-          messages: [
-            Message(
-              messageId: "some_initial_id",
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-              type: "text",
-              content: newChatResponse['message'],
-              sender: "user",
-              processed: true,
-              chatId: newChatResponse['chatId'],
-            )
-          ],
-        );
-        print('Chat created successfully');
-        print(_currentChat!.chatId);
-
-        // String? tempUserId = await Auth().getUserId();
-        // Logger().d('tempUserId   $tempUserId');
-        UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
-        await userDetailsProvider.fetchUserDetails(tempUserId!);
-
-        User? userDetails = userDetailsProvider.userDetails;
-        if (userDetails != null) {
-          User updatedUser = User(
-            userId: tempUserId,
-            fullName: userDetails.fullName /* may not have at 1st login */,
-            username: userDetails.username /*  */,
-            emailOrPhone: userDetails.emailOrPhone /*  */,
-            dateOfBirth: userDetails.dateOfBirth /*  */,
-            bio: '' /* may not have at 1st login */,
-            peopleDining: userDetails.peopleDining /*  */,
-            securityCode: userDetails.securityCode,
-            currentChatId: _currentChat!.chatId,
-            /* may not have at 1st login */
-            avatarURL: 'https://i.pravatar.cc/300', /* may not have at 1st login */
-          );
-          print('Updated User created successfully');
-          await Api.updateUserDetails(tempUserId, updatedUser);
-          print('Updated User details successfully');
-        }
-        // Update the user details with new chatId
-      } catch (e) {
-        Logger().e('Failed to create a new chat. Error: $e');
-        return;
-      }
-    } else {
-      print('Chat already initialized. _currentChat is not null');
-    }
+    Logger().i('_handleSubmitted $text');
+    Logger().i('_handleSubmitted _currentChat $_currentChat');
 
     _textController.clear();
 
+    String? tempUserId = await Auth().getUserId();
+    UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    await userDetailsProvider.fetchUserDetails(tempUserId!);
+    User? userDetails = userDetailsProvider.userDetails;
+    Logger().d('DUI la Sing ${userDetails?.toJson()}');
     // Step 1: Create a new Message object.
     Message newMessage = Message(
       messageId: '', // Placeholder, actual value should be provided by the server.
@@ -220,24 +154,24 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       updatedAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
       type: 'text', // Assuming a simple text message.
       content: text,
-      sender: _userId,
+      sender: userDetails!.userId,
       processed: false, // Placeholder, actual value should be provided by the server.
-      chatId: _currentChat!.chatId,
+      chatId: userDetails!.currentChatId,
     );
 
     // Step 2: Store the user's message to the server.
     print('Storing message to server...');
-    await Api.storeMessage(_userId, _currentChat!.chatId, newMessage);
+    await Api.storeMessage(userDetails!.userId, userDetails!.currentChatId, newMessage);
     print('Message stored.');
 
-    // Step 3: Send the message to the server.
+    // Step 3: Send the message to the server. to oppenAI API
     print('Sending message to server...');
     Message botResponse = await Api().sendMessage(newMessage, 'en');
     print('Received response from server.');
 
     // Step 4: Store the bot's message to the server.
     print('Storing bot message to server...');
-    await Api.storeMessage(_userId, _currentChat!.chatId, botResponse);
+    await Api.storeMessage(userDetails!.userId, userDetails!.currentChatId, botResponse);
     print('Bot message stored.');
 
     // Step 5: Add the new messages to the chat history.
