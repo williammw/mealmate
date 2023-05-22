@@ -76,8 +76,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       Logger().d('User Details currentChatId: ${userDetails.currentChatId.isEmpty}');
 
       if (userDetails.currentChatId.isNotEmpty) {
-        print('inside');
-        userDetails.currentChatId = _currentChat!.chatId;
+        print('inside curr chatID ${userDetails.currentChatId}');
+
+        // _currentChat!.chatId = userDetails.currentChatId;
         String currentChatId = userDetails.currentChatId;
 
         // Now get the current chat using the chat ID
@@ -182,24 +183,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         await userDetailsProvider.fetchUserDetails(tempUserId!);
 
         User? userDetails = userDetailsProvider.userDetails;
-
+        if (userDetails != null) {
+          User updatedUser = User(
+            userId: tempUserId,
+            fullName: userDetails.fullName /* may not have at 1st login */,
+            username: userDetails.username /*  */,
+            emailOrPhone: userDetails.emailOrPhone /*  */,
+            dateOfBirth: userDetails.dateOfBirth /*  */,
+            bio: '' /* may not have at 1st login */,
+            peopleDining: userDetails.peopleDining /*  */,
+            securityCode: userDetails.securityCode,
+            currentChatId: _currentChat!.chatId,
+            /* may not have at 1st login */
+            avatarURL: 'https://i.pravatar.cc/300', /* may not have at 1st login */
+          );
+          print('Updated User created successfully');
+          await Api.updateUserDetails(tempUserId, updatedUser);
+          print('Updated User details successfully');
+        }
         // Update the user details with new chatId
-        User updatedUser = User(
-          userId: tempUserId,
-          fullName: '' /* may not have at 1st login */,
-          username: '' /*  */,
-          emailOrPhone: '' /*  */,
-          dateOfBirth: '' /*  */,
-          bio: '' /* may not have at 1st login */,
-          peopleDining: '' /*  */,
-          securityCode: '' /*  */,
-          currentChatId: _currentChat!.chatId,
-          /* may not have at 1st login */
-          avatarURL: 'https://i.pravatar.cc/300', /* may not have at 1st login */
-        );
-        print('Updated User created successfully');
-        await Api.updateUserDetails(tempUserId, updatedUser);
-        print('Updated User details successfully');
       } catch (e) {
         Logger().e('Failed to create a new chat. Error: $e');
         return;
