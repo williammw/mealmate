@@ -13,6 +13,7 @@ import '../auth.dart';
 import '../models/new_chat_related_models.dart';
 import '../providers/userdetails_notifer.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -28,6 +29,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   String _currentInput = '';
   Chat? _currentChat;
   late TextEditingController _textController;
+  final botAvatarUrl = 'https://i.pravatar.cc/300';
+  final userAvatarUrl = 'https://i.pravatar.cc/300';
 
   @override
   void initState() {
@@ -202,9 +205,21 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 itemCount: _chatHistory.length,
                 itemBuilder: (_, int index) {
                   var message = _chatHistory[index];
-                  return ListTile(
-                    title: Text(message.content),
-                    subtitle: Text('Sent at ${message.createdAt}'),
+                  bool isBot = message.sender == 'bot' ? true : false; // This is just an example. Replace with your own logic.
+
+                  // Format the time ago
+                  final messageTime = timeago.format(message.createdAt, locale: 'en_short');
+
+                  return Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(isBot ? botAvatarUrl : userAvatarUrl), // Replace with your avatar URLs
+                        ),
+                        title: Text(message.content),
+                        subtitle: Text(messageTime),
+                      ),
+                    ],
                   );
                 },
               ),
