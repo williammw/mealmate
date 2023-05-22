@@ -161,6 +161,7 @@ class Api {
   }
 
   Future<List<Message>> getMessagesForChat(String chatId, int limit) async {
+    print('getMessagesForChat called');
     final response = await http.post(
       Uri.parse('${dotenv.env['API_URL']}/get_messages_for_chat'),
       body: jsonEncode({

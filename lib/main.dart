@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:mealmate/providers/userdetails_notifer.dart';
 import 'providers/drag_state_notifer.dart';
 import 'providers/language_notifer.dart';
 import 'providers/tab_index_notifier.dart';
@@ -30,6 +31,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => DragState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserDetailsProvider(),
         ),
       ],
       child: const MealMateApp(),

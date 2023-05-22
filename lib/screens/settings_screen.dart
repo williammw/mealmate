@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import '../api.dart';
 import '../auth.dart'; // Make sure this import points to the correct location of the 'auth.dart' file.
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/new_chat_related_models.dart';
+import '../providers/userdetails_notifer.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -24,6 +26,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Remove the authToken from secure storage
       await storage.delete(key: 'authToken');
+
+      // Clear the user details from UserDetailsProvider
+      UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+      userDetailsProvider.clearUserDetails();
+
       // Navigate to the login screen
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     } else {

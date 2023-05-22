@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../auth.dart';
 import '../models/new_chat_related_models.dart';
+import '../providers/userdetails_notifer.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -46,10 +47,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     Logger().d('tempUserId   $tempUserId');
 
     // Fetch user details and current chat from your backend
-    User userDetails = await Api().getUserDetails(tempUserId!);
+    // User userDetails = await Api().getUserDetails(tempUserId!);
     // User userDetails = User.fromJson(userDetailsMap);
 
-    /**
+    // switch fetch to using providor
+    UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    await userDetailsProvider.fetchUserDetails(tempUserId!);
+
+    User? userDetails = userDetailsProvider.userDetails;
+    if (userDetails != null) {
+      // Use the user details
+      Logger().d('UserDetailProvder object assessing ${userDetails.toJson()}');
+      /**
      * {
      * userId: 2nQvJGf2XMUJqNnDp4ZCl9EJdOc2, 
      * full_name: test, 
@@ -63,32 +72,38 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
      * current_chat_id: 526cd281-cf43-488e-91e3-baf1a66e3130} 
      */
 
-    Logger().d('All User Details userDetails : ${userDetails.toJson()}');
-    Logger().d('User Details currentChatId: ${userDetails.currentChatId}');
+      Logger().d('All User Details userDetails : ${userDetails.toJson()}');
+      Logger().d('User Details currentChatId: ${userDetails.currentChatId.isEmpty}');
 
-    if (_currentChat != null) {
-      userDetails.currentChatId = _currentChat!.chatId;
-      String currentChatId = userDetails.currentChatId;
+      if (userDetails.currentChatId.isNotEmpty) {
+        print('inside');
+        userDetails.currentChatId = _currentChat!.chatId;
+        String currentChatId = userDetails.currentChatId;
 
-      // Now get the current chat using the chat ID
-      Logger().d('getChat pass $currentChatId $tempUserId');
+        // Now get the current chat using the chat ID
+        Logger().d('getChat pass $currentChatId $tempUserId');
 
-      if (currentChatId != null) {
-        try {
-          _currentChat = await Api.getChat(currentChatId, tempUserId);
-        } catch (e) {
-          Logger().d('No chat found for this user, creating a new chat.');
+        if (currentChatId != null) {
+          print('inside111');
+          try {
+            print('insid22222');
+            _currentChat = await Api.getChat(currentChatId, tempUserId);
+          } catch (e) {
+            print('insid333');
+            Logger().d('No chat found for this user, creating a new chat.');
+            _currentChat = await _createNewChat(tempUserId, userDetails);
+          }
+        } else {
+          print('inside444');
+          Logger().d('No current chat for this user, creating a new chat.');
           _currentChat = await _createNewChat(tempUserId, userDetails);
         }
-      } else {
-        Logger().d('No current chat for this user, creating a new chat.');
-        _currentChat = await _createNewChat(tempUserId, userDetails);
       }
-    }
-    // Assuming the User object contains the current chat ID.
+      // Assuming the User object contains the current chat ID.
 
-    // You also need to load the chat messages for this chat, if any
-    await _loadMessages();
+      // You also need to load the chat messages for this chat, if any
+      await _loadMessages();
+    }
   }
 
   Future<Chat> _createNewChat(String tempUserId, User user) async {
@@ -109,15 +124,22 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _loadMessages() async {
-    if (_currentChat == null || _currentChat!.messages.isEmpty) {
-      return;
-    }
+    Logger().d('_loadMessages');
+    String? tempUserId = await Auth().getUserId();
+    UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    await userDetailsProvider.fetchUserDetails(tempUserId!);
+    User? userDetails = userDetailsProvider.userDetails;
+    if (userDetails != null) {
+      if (userDetails.currentChatId.isEmpty) {
+        return;
+      }
 
-    Api api = Api();
-    var messages = await api.getMessagesForChat(_currentChat!.chatId, 20);
-    setState(() {
-      _chatHistory = messages;
-    });
+      Api api = Api();
+      var messages = await api.getMessagesForChat(_currentChat!.chatId, 20);
+      setState(() {
+        _chatHistory = messages;
+      });
+    }
   }
 
   Future<void> _handleSubmitted(String text) async {
@@ -154,16 +176,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         print('Chat created successfully');
         print(_currentChat!.chatId);
 
+        // String? tempUserId = await Auth().getUserId();
+        // Logger().d('tempUserId   $tempUserId');
+        UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+        await userDetailsProvider.fetchUserDetails(tempUserId!);
+
+        User? userDetails = userDetailsProvider.userDetails;
+
         // Update the user details with new chatId
         User updatedUser = User(
           userId: tempUserId,
-          fullName: 'test' /* may not have at 1st login */,
-          username: 'wwwwwmw' /*  */,
-          emailOrPhone: 'william.manwai@gmail.com' /*  */,
-          dateOfBirth: '1986-08-24' /*  */,
-          bio: 'super strong engineer in the world' /* may not have at 1st login */,
-          peopleDining: '2' /*  */,
-          securityCode: '215548' /*  */,
+          fullName: '' /* may not have at 1st login */,
+          username: '' /*  */,
+          emailOrPhone: '' /*  */,
+          dateOfBirth: '' /*  */,
+          bio: '' /* may not have at 1st login */,
+          peopleDining: '' /*  */,
+          securityCode: '' /*  */,
           currentChatId: _currentChat!.chatId,
           /* may not have at 1st login */
           avatarURL: 'https://i.pravatar.cc/300', /* may not have at 1st login */
