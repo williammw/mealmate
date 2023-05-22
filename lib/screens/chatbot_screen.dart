@@ -11,6 +11,7 @@ import '../api.dart';
 import '../auth.dart';
 import '../models/new_chat_related_models.dart';
 import '../providers/userdetails_notifer.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -113,8 +114,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     print('Created New Chat: $newChatResponse');
     Chat newChat = Chat(
       chatId: newChatResponse['chatId'],
-      createdAt: DateTime.parse(newChatResponse['chat']['createdAt']),
-      updatedAt: DateTime.parse(newChatResponse['chat']['updatedAt']),
+      createdAt: HttpDate.parse(newChatResponse['chat']['createdAt']),
+      updatedAt: HttpDate.parse(newChatResponse['chat']['updatedAt']),
       messages: [],
     );
 
