@@ -193,7 +193,7 @@ class Api {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
-      print(responseBody['response']);
+      Logger().d('response body    ::::  ${responseBody['response']}');
       // Create a new Message object for the bot's response.
       Message botMessage = Message(
         messageId: 'bot', // A placeholder ID.
@@ -213,7 +213,7 @@ class Api {
   }
 
   static Future<void> updateUserDetails(String userId, User user) async {
-    print('Starting to update user details...');
+    Logger().d('Starting to update user details... $userId $user');
 
     final response = await http.put(
       Uri.parse('${dotenv.env['API_URL']}/update_user_details'),

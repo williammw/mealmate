@@ -31,6 +31,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   late TextEditingController _textController;
   final botAvatarUrl = 'https://i.pravatar.cc/300?u=a042581f4e2902670';
   final userAvatarUrl = 'https://i.pravatar.cc/300?u=n0283oji';
+  bool _isComposing = false; // Added to track whether the user has input
 
   @override
   void initState() {
@@ -46,6 +47,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _initializeUserAndChat() async {
+    // final storage = const FlutterSecureStorage();
+    // await storage.delete(key: 'authToken');
     // final storage = const FlutterSecureStorage();
     // await storage.delete(key: 'authToken');
     Logger().d('Initializing user and chat...');
@@ -111,7 +114,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       chatId: newChatResponse['chatId'],
       createdAt: HttpDate.parse(newChatResponse['chat']['createdAt']),
       updatedAt: HttpDate.parse(newChatResponse['chat']['updatedAt']),
-      messages: [],
+      messages: [
+        Message(
+          messageId: '', // Placeholder, actual value should be provided by the server.
+          createdAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
+          updatedAt: DateTime.now(), // Place`holder, actual value should be provided by the server.
+          type: 'text', // Assuming a simple text message.
+          content: '',
+          sender: tempUserId,
+          processed: false, // Placeholder, actual value should be provided by the server.
+          chatId: newChatResponse['chatId'],
+        )
+      ],
     );
 
     // update the user details with new chatId
@@ -133,6 +147,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
       Api api = Api();
       var messages = await api.getMessagesForChat(tempUserId, userDetails.currentChatId, 20);
+      Logger().d('message length ${messages.length}');
       setState(() {
         _chatHistory = messages;
       });
@@ -140,48 +155,68 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _handleSubmitted(String text) async {
+    // Message newMessage = Message(
+    //   messageId: '', // Placeholder, actual value should be provided by the server.
+    //   createdAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
+    //   updatedAt: DateTime.now(), // Place`holder, actual value should be provided by the server.
+    //   type: 'text', // Assuming a simple text message.
+    //   content: text,
+    //   sender: '',
+    //   processed: false, // Placeholder, actual value should be provided by the server.
+    //   chatId: '',
+    // );
+
     Logger().i('_handleSubmitted $text');
     Logger().i('_handleSubmitted _currentChat $_currentChat');
 
-    _textController.clear();
+    // _textController.clear();
 
     String? tempUserId = await Auth().getUserId();
     UserDetailsProvider userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
     await userDetailsProvider.fetchUserDetails(tempUserId!);
     User? userDetails = userDetailsProvider.userDetails;
     Logger().d('DUI la Sing ${userDetails?.toJson()}');
+    Logger().e('tempUserId $tempUserId');
     // Step 1: Create a new Message object.
     Message newMessage = Message(
       messageId: '', // Placeholder, actual value should be provided by the server.
       createdAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
-      updatedAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
+      updatedAt: DateTime.now(), // Place`holder, actual value should be provided by the server.
       type: 'text', // Assuming a simple text message.
       content: text,
-      sender: userDetails!.userId,
+      sender: tempUserId,
       processed: false, // Placeholder, actual value should be provided by the server.
       chatId: userDetails!.currentChatId,
     );
+    // setState(() {
+    //   _chatHistory.insert(0, newMessage);
+    // });
+    setState(() {
+      _isComposing = false; // Reset _isComposing when the message is submitted
+      _chatHistory.insert(0, newMessage);
+    });
+    _textController.clear();
 
     // Step 2: Store the user's message to the server.
     print('Storing message to server...');
-    await Api.storeMessage(userDetails!.userId, userDetails!.currentChatId, newMessage);
+    await Api.storeMessage(tempUserId, userDetails!.currentChatId, newMessage);
     print('Message stored.');
 
     // Step 3: Send the message to the server. to oppenAI API
     print('Sending message to server...');
-    Message botResponse = await Api().sendMessage(newMessage, 'en');
+    Message botResponse = await Api().sendMessage(newMessage, 'zh-hk');
     print('Received response from server.');
 
     // Step 4: Store the bot's message to the server.
     print('Storing bot message to server...');
-    await Api.storeMessage(userDetails!.userId, userDetails!.currentChatId, botResponse);
+    await Api.storeMessage(tempUserId, userDetails!.currentChatId, botResponse);
     print('Bot message stored.');
 
     // Step 5: Add the new messages to the chat history.
     setState(() {
       print('Adding messages to chat history...');
       // Insert the user's message first.
-      _chatHistory.insert(0, newMessage);
+      // _chatHistory.insert(0, newMessage);
       // Then insert the bot's response.
       _chatHistory.insert(0, botResponse);
       print('Messages added to chat history.');
@@ -197,59 +232,37 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ),
         body: Column(
           children: <Widget>[
-            // This Flexible widget contains the ListView for chat messages.
             Flexible(
               child: ListView.builder(
                 padding: EdgeInsets.all(8.0),
-                reverse: true, // To keep the latest messages at the bottom
+                reverse: true,
                 itemCount: _chatHistory.length,
                 itemBuilder: (_, int index) {
                   var message = _chatHistory[index];
-                  bool isBot = message.sender == 'bot' ? true : false; // This is just an example. Replace with your own logic.
+                  bool isBot = message.sender == 'bot' ? true : false;
 
-                  // Format the time ago
                   final messageTime = timeago.format(message.createdAt, locale: 'en_short');
 
-                  return Column(
-                    children: <Widget>[
-                      ListTile(
-                        contentPadding: EdgeInsets.all(0),
-                        title: Align(
-                          alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(isBot ? botAvatarUrl : userAvatarUrl), // Replace with your avatar URLs
-                          ),
-                        ),
+                  return Container(
+                    color: isBot ? Colors.grey[200] : Colors.grey[300],
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(10),
+                      leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
+                      trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
+                      title: Align(
+                        alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                        child: Text(message.content),
                       ),
-                      ListTile(
-                        contentPadding: EdgeInsets.all(0),
-                        title: Align(
-                          alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isBot ? Colors.grey[200] : Theme.of(context).accentColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                            child: Text(
-                              message.content,
-                              style: TextStyle(
-                                color: isBot ? Colors.black : Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        subtitle: Text(messageTime),
+                      subtitle: Align(
+                        alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                        child: Text(messageTime),
                       ),
-                      Divider(height: 1.0),
-                    ],
+                    ),
                   );
                 },
               ),
             ),
-            // A divider to separate the chat area and the text input field.
             Divider(height: 1.0),
-            // The container for the text input field.
             Container(
               decoration: BoxDecoration(color: Theme.of(context).cardColor),
               child: _buildTextComposer(),
@@ -260,7 +273,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-// Returns the widget for text input field.
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
@@ -268,20 +280,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
-            // The text input field.
             Flexible(
               child: TextField(
                 controller: _textController,
+                onChanged: (String text) {
+                  setState(() {
+                    _isComposing = text.isNotEmpty;
+                  });
+                },
                 onSubmitted: _handleSubmitted,
                 decoration: InputDecoration.collapsed(hintText: "Send a message"),
               ),
             ),
-            // The send button.
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
                 icon: const FaIcon(FontAwesomeIcons.paperPlane),
-                onPressed: () => _handleSubmitted(_textController.text),
+                onPressed: _isComposing ? () => _handleSubmitted(_textController.text) : null,
               ),
             ),
           ],

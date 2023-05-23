@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class User {
   final String userId;
   final String fullName;
@@ -37,7 +39,7 @@ class User {
       securityCode: json['security_code'],
       avatarURL: json['avatar_url'], // New field for avatar
       currentChatId: json['current_chat_id'],
-      preferredLanguage: json['preferred_language'],
+      preferredLanguage: json['preferred_language'] ?? '',
     );
   }
 
@@ -53,7 +55,7 @@ class User {
       'security_code': securityCode,
       'avatar_url': avatarURL, // New field for avatar
       'current_chat_id': currentChatId,
-      'preferred_language': preferredLanguage,
+      'preferredLanguage': preferredLanguage,
     };
   }
 }
@@ -106,10 +108,11 @@ class Message {
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
+    final format = DateFormat('EEE, dd MMM yyyy HH:mm:ss');
     return Message(
       messageId: json['message_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: format.parse(json['created_at']),
+      updatedAt: format.parse(json['updated_at']),
       type: json['type'],
       content: json['content'],
       sender: json['sender'],
@@ -119,10 +122,11 @@ class Message {
   }
 
   Map<String, dynamic> toJson() {
+    final format = DateFormat('EEE, dd MMM yyyy HH:mm:ss');
     return {
       'message_id': messageId,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'created_at': format.format(createdAt),
+      'updated_at': format.format(updatedAt),
       'type': type,
       'content': content,
       'sender': sender,
