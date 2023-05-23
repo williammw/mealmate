@@ -32,6 +32,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final botAvatarUrl = 'https://i.pravatar.cc/300?u=a042581f4e2902670';
   final userAvatarUrl = 'https://i.pravatar.cc/300?u=n0283oji';
   bool _isComposing = false; // Added to track whether the user has input
+  bool _loadingMessages = false; // Add this to your state variables.
 
   @override
   void initState() {
@@ -228,38 +229,42 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Chatbot'),
+          title: const Text('Chatbot'),
         ),
         body: Column(
           children: <Widget>[
             Flexible(
-              child: ListView.builder(
-                padding: EdgeInsets.all(8.0),
-                reverse: true,
-                itemCount: _chatHistory.length,
-                itemBuilder: (_, int index) {
-                  var message = _chatHistory[index];
-                  bool isBot = message.sender == 'bot' ? true : false;
-
-                  final messageTime = timeago.format(message.createdAt, locale: 'en_short');
-
-                  return Container(
-                    color: isBot ? Colors.grey[200] : Colors.grey[300],
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(10),
-                      leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
-                      trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
-                      title: Align(
-                        alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                        child: Text(message.content),
-                      ),
-                      subtitle: Align(
-                        alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                        child: Text(messageTime),
-                      ),
-                    ),
-                  );
-                },
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    // padding: EdgeInsets.all(8.0),
+                    reverse: true,
+                    itemCount: _chatHistory.length,
+                    itemBuilder: (_, int index) {
+                      var message = _chatHistory[index];
+                      bool isBot = message.sender == 'bot' ? true : false;
+                      final messageTime = timeago.format(message.createdAt, locale: 'en_short');
+                      return Container(
+                        color: isBot ? Colors.grey[200] : Colors.grey[300],
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(10),
+                          leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
+                          trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
+                          title: Align(
+                            alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                            child: Text(message.content),
+                          ),
+                          subtitle: Align(
+                            alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+                            child: Text(messageTime),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (_loadingMessages) // If messages are being loaded, show a CircularProgressIndicator.
+                    Center(child: CircularProgressIndicator()),
+                ],
               ),
             ),
             Divider(height: 1.0),
