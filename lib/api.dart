@@ -208,6 +208,8 @@ class Api {
 
       return botMessage;
     } else {
+      Logger().e('Request failed with status: ${response.statusCode}.');
+      Logger().e('Response body: ${response.body}');
       throw Exception('Failed to send message');
     }
   }

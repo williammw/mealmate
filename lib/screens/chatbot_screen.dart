@@ -32,7 +32,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final botAvatarUrl = 'https://i.pravatar.cc/300?u=a042581f4e2902670';
   final userAvatarUrl = 'https://i.pravatar.cc/300?u=n0283oji';
   bool _isComposing = false; // Added to track whether the user has input
-  bool _loadingMessages = false; // Add this to your state variables.
+  bool _isProcessing = false; // Add this to your state variables.
 
   @override
   void initState() {
@@ -156,20 +156,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _handleSubmitted(String text) async {
-    // Message newMessage = Message(
-    //   messageId: '', // Placeholder, actual value should be provided by the server.
-    //   createdAt: DateTime.now(), // Placeholder, actual value should be provided by the server.
-    //   updatedAt: DateTime.now(), // Place`holder, actual value should be provided by the server.
-    //   type: 'text', // Assuming a simple text message.
-    //   content: text,
-    //   sender: '',
-    //   processed: false, // Placeholder, actual value should be provided by the server.
-    //   chatId: '',
-    // );
-
     Logger().i('_handleSubmitted $text');
     Logger().i('_handleSubmitted _currentChat $_currentChat');
-
+    _isProcessing = true;
+    setState(() => {});
     // _textController.clear();
 
     String? tempUserId = await Auth().getUserId();
@@ -213,6 +203,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     await Api.storeMessage(tempUserId, userDetails!.currentChatId, botResponse);
     print('Bot message stored.');
 
+    _isProcessing = false;
     // Step 5: Add the new messages to the chat history.
     setState(() {
       print('Adding messages to chat history...');
@@ -239,13 +230,20 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   ListView.builder(
                     // padding: EdgeInsets.all(8.0),
                     reverse: true,
-                    itemCount: _chatHistory.length,
+                    itemCount: _chatHistory.length + (_isProcessing ? 1 : 0),
                     itemBuilder: (_, int index) {
+                      if (_isProcessing && index == 0) {
+                        return Container(
+                          padding: const EdgeInsets.all(8),
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator(),
+                        );
+                      }
                       var message = _chatHistory[index];
                       bool isBot = message.sender == 'bot' ? true : false;
                       final messageTime = timeago.format(message.createdAt, locale: 'en_short');
                       return Container(
-                        color: isBot ? Colors.grey[200] : Colors.grey[300],
+                        color: isBot ? Colors.grey[400] : Colors.grey[300],
                         child: ListTile(
                           contentPadding: EdgeInsets.all(10),
                           leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
@@ -262,12 +260,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       );
                     },
                   ),
-                  if (_loadingMessages) // If messages are being loaded, show a CircularProgressIndicator.
-                    Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
-            Divider(height: 1.0),
+            const Divider(height: 1.0),
             Container(
               decoration: BoxDecoration(color: Theme.of(context).cardColor),
               child: _buildTextComposer(),
