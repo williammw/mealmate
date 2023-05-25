@@ -186,7 +186,7 @@ class Api {
     print('||sendMessage||');
     print(message.content);
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/send_message'),
+      Uri.parse('${dotenv.env['API_URL']}/send_message_davinci'),
       body: jsonEncode({'message': message.content, 'language_code': languageCode}),
       headers: {'Content-Type': 'application/json'},
     );

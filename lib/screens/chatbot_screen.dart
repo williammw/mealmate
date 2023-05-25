@@ -113,8 +113,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     print('Created New Chat: $newChatResponse');
     Chat newChat = Chat(
       chatId: newChatResponse['chatId'],
-      createdAt: HttpDate.parse(newChatResponse['chat']['createdAt']),
-      updatedAt: HttpDate.parse(newChatResponse['chat']['updatedAt']),
+      createdAt: DateTime.parse(newChatResponse['chat']['createdAt']),
+      updatedAt: DateTime.parse(newChatResponse['chat']['updatedAt']),
       messages: [
         Message(
           messageId: '', // Placeholder, actual value should be provided by the server.
@@ -239,13 +239,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           child: const CircularProgressIndicator(),
                         );
                       }
-                      var message = _chatHistory[index];
+
+                      // Subtracts 1 from the index when _isProcessing is true
+                      var messageIndex = _isProcessing ? index - 1 : index;
+                      var message = _chatHistory[messageIndex];
                       bool isBot = message.sender == 'bot' ? true : false;
                       final messageTime = timeago.format(message.createdAt, locale: 'en_short');
                       return Container(
                         color: isBot ? Colors.grey[400] : Colors.grey[300],
                         child: ListTile(
-                          contentPadding: EdgeInsets.all(10),
+                          contentPadding: const EdgeInsets.all(10),
                           leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
                           trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
                           title: Align(
