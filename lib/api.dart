@@ -15,17 +15,17 @@ class Api {
 
   // Modify the verifySecurityCode method to return a boolean value
   static Future<bool> verifySecurityCode(String email, String securityCode, String authToken) async {
-    print('verifySecurityCode Email: $email');
-    print('verifySecurityCode Security Code: $securityCode');
+    Logger().i('verifySecurityCode Email: $email');
+    Logger().i('verifySecurityCode Security Code: $securityCode');
     try {
       final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/verify_security_code'), // Replace with your API endpoint
+        Uri.parse('${dotenv.env['API_URL']}/auth/verify_security_code'), // Replace with your API endpoint
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'email': email, 'security_code': securityCode, 'auth_token': authToken},
       );
 
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      Logger().i('Response status code: ${response.statusCode}');
+      Logger().i('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
@@ -38,18 +38,18 @@ class Api {
         throw Exception('Failed to verify security code');
       }
     } catch (e) {
-      print('Exception in verifySecurityCode: $e');
+      Logger().i('Exception in verifySecurityCode: $e');
       rethrow;
     }
   }
 
   static Future<void> storeMessage(String userId, String chatId, Message message) async {
-    print('UserId: $userId');
-    print('ChatId: $chatId');
-    print('Message: ${message.toJson()}');
+    Logger().i('UserId: $userId');
+    Logger().i('ChatId: $chatId');
+    Logger().i('Message: ${message.toJson()}');
 
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/store_message'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/store_message'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'user_id': userId,
@@ -59,20 +59,20 @@ class Api {
     );
 
     if (response.statusCode != 200) {
-      print('Server responded with status code: ${response.statusCode}');
-      print('Server response body: ${response.body}');
+      Logger().i('Server responded with status code: ${response.statusCode}');
+      Logger().i('Server response body: ${response.body}');
       throw Exception('Failed to store message');
     }
   }
 
   Future<User> getUserDetails(String uid) async {
-    print(dotenv.env['API_URL']);
+    Logger().i(dotenv.env['API_URL']);
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/get_user_details?uid=$uid'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/get_user_details?uid=$uid'),
     );
 
     if (response.statusCode == 200) {
-      print('getUserDetails Response data: ${response.body}');
+      Logger().i('getUserDetails Response data: ${response.body}');
       return User.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load user details');
@@ -82,7 +82,7 @@ class Api {
   static Future<Chat> getChat(String chatId, String userId) async {
     Logger().d('getChat $chatId   $userId');
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/get_chat?chat_id=$chatId&user_id=$userId'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/get_chat?chat_id=$chatId&user_id=$userId'),
     );
 
     if (response.statusCode == 200) {
@@ -94,7 +94,7 @@ class Api {
 
   static Future<List<dynamic>> getChats(String userId) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/get_user_chats?user_id=$userId'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/get_user_chats?user_id=$userId'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['chats'];
@@ -104,27 +104,27 @@ class Api {
   }
 
   static Future<Map<String, dynamic>> createNewChat(String userId) async {
-    print('createNewChat userId: $userId');
+    Logger().i('createNewChat userId: $userId');
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/create_new_chat'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/create_new_chat'),
       body: jsonEncode({'user_id': userId}),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
-      print('createNewChar in Flutter response in 200 code');
+      Logger().i('createNewChar in Flutter response in 200 code');
       return jsonDecode(response.body);
     } else {
       // Log or handle the error message here
-      print('Server responded with status code: ${response.statusCode}');
-      print('Server response body: ${response.body}');
+      Logger().i('Server responded with status code: ${response.statusCode}');
+      Logger().i('Server response body: ${response.body}');
       throw Exception('Failed to create a new chat');
     }
   }
 
   static Future<String> getDefaultMessage(String languageCode) async {
-    print('languageCode: $languageCode');
-    var url = Uri.parse('${dotenv.env['API_URL']}/get_default_message');
+    Logger().i('languageCode: $languageCode');
+    var url = Uri.parse('${dotenv.env['API_URL']}/api/get_default_message');
     var response = await http.post(
       url,
       headers: <String, String>{
@@ -135,8 +135,8 @@ class Api {
       }),
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    Logger().i('Response status: ${response.statusCode}');
+    Logger().i('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, then parse the JSON.
@@ -150,7 +150,7 @@ class Api {
   // Save user data using the API
   static Future<void> saveUserData(String email, String securityCode, String authToken) async {
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/save_user_data'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/save_user_data'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {'email': email, 'security_code': securityCode, 'auth_token': authToken},
     );
@@ -164,7 +164,7 @@ class Api {
     Logger().i('getMessagesForChat called $userId $chatId $limit');
 
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/get_messages_for_chat'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/get_messages_for_chat'),
       body: jsonEncode({
         'chat_id': chatId,
         'user_id': userId,
@@ -183,10 +183,10 @@ class Api {
 
   //
   Future<Message> sendMessage(Message message, String languageCode) async {
-    print('||sendMessage||');
-    print(message.content);
+    Logger().i('||sendMessage||');
+    Logger().i(message.content);
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/send_message_davinci'),
+      Uri.parse('${dotenv.env['API_URL']}/api/send_message_davinci'),
       body: jsonEncode({'message': message.content, 'language_code': languageCode}),
       headers: {'Content-Type': 'application/json'},
     );
@@ -218,7 +218,7 @@ class Api {
     Logger().d('Starting to update user details... $userId $user');
 
     final response = await http.put(
-      Uri.parse('${dotenv.env['API_URL']}/update_user_details'),
+      Uri.parse('${dotenv.env['API_URL']}/cms/update_user_details'),
       body: jsonEncode({
         'user_id': userId,
         'user_details': user.toJson(),
@@ -226,13 +226,13 @@ class Api {
       headers: {'Content-Type': 'application/json'},
     );
 
-    print('Update response status: ${response.statusCode}');
+    Logger().i('Update response status: ${response.statusCode}');
 
     if (response.statusCode != 200) {
-      print('Response body: ${response.body}');
+      Logger().i('Response body: ${response.body}');
       throw Exception('Failed to update user details');
     }
 
-    print('User details updated successfully');
+    Logger().i('User details updated successfully');
   }
 }

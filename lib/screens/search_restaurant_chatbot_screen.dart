@@ -91,7 +91,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     });
 
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/send_message_davinci'),
+      Uri.parse('${dotenv.env['API_URL']}/api/send_message_davinci'),
       body: json.encode({
         'message': message,
         'language_code': languageCode,
@@ -156,7 +156,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     if (userId != null) {
       try {
         final response = await http.post(
-          Uri.parse('${dotenv.env['API_URL']}/store_message'),
+          Uri.parse('${dotenv.env['API_URL']}/cms/store_message'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -190,7 +190,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     String? userId = await Auth().getUserId();
     if (userId != null) {
       final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/store_message'),
+        Uri.parse('${dotenv.env['API_URL']}/cms/store_message'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
