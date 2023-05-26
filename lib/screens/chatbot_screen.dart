@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -201,9 +202,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       var message = _chatHistory[messageIndex];
                       bool isBot = message.sender == 'bot' ? true : false;
                       final messageTime = timeago.format(message.createdAt, locale: 'en_short');
+                      GlobalKey _listTileKey = GlobalKey();
+
                       return Container(
                         color: isBot ? Colors.grey[400] : Colors.grey[300],
                         child: ListTile(
+                          key: _listTileKey,
                           contentPadding: const EdgeInsets.all(10),
                           leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
                           trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
@@ -215,6 +219,35 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
                             child: Text(messageTime),
                           ),
+                          onLongPress: () {
+                            final RenderBox? overlay = Overlay.of(context)?.context.findRenderObject() as RenderBox?;
+                            final RenderBox? listTile = _listTileKey.currentContext?.findRenderObject() as RenderBox?;
+                            if (overlay != null && listTile != null) {
+                              showMenu(
+                                context: context,
+                                position: RelativeRect.fromRect(
+                                  listTile.localToGlobal(listTile.size.topCenter(Offset.zero), ancestor: overlay) & Size(40, 40),
+                                  Offset.zero & overlay.size,
+                                ),
+                                items: <PopupMenuEntry<String>>[
+                                  PopupMenuItem<String>(
+                                    value: message.content,
+                                    child: Row(
+                                      children: <Widget>[
+                                        const Icon(Icons.content_copy),
+                                        const SizedBox(width: 10),
+                                        Text('Copy text'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ).then<void>((String? value) {
+                                if (value != null) {
+                                  Clipboard.setData(ClipboardData(text: value));
+                                }
+                              });
+                            }
+                          },
                         ),
                       );
                     },
