@@ -233,9 +233,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                   PopupMenuItem<String>(
                                     value: message.content,
                                     child: Row(
-                                      children: <Widget>[
-                                        const Icon(Icons.content_copy),
-                                        const SizedBox(width: 10),
+                                      children: const <Widget>[
+                                        Icon(Icons.content_copy),
+                                        SizedBox(width: 10),
                                         Text('Copy text'),
                                       ],
                                     ),
