@@ -168,7 +168,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.black,
           title: const Text('Chatbot'),
+          leading: IconButton(
+            icon: const FaIcon(FontAwesomeIcons.arrowLeft), // FaIcon back arrow
+            onPressed: () {
+              Logger().d("ARROW CICKED POP");
+              Navigator.pop(context); // On pressed, this will pop the Chatbot screen
+            },
+          ),
         ),
         body: Column(
           children: <Widget>[
@@ -232,25 +240,60 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
+            IconButton(
+              icon: const FaIcon(FontAwesomeIcons.plus),
+              onPressed: null, // You need to handle what happens when the plus button is pressed
+            ),
             Flexible(
-              child: TextField(
-                controller: _textController,
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposing = text.isNotEmpty;
-                  });
-                },
-                onSubmitted: _handleSubmitted,
-                decoration: InputDecoration.collapsed(hintText: "Send a message"),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  reverse: true,
+                  child: TextField(
+                    controller: _textController,
+                    minLines: 1, // Set minLines property
+                    maxLines: 4, // Set maxLines property
+                    onChanged: (String text) {
+                      setState(() {
+                        _isComposing = text.isNotEmpty;
+                      });
+                    },
+                    onSubmitted: _handleSubmitted,
+                    decoration: InputDecoration(
+                      hintText: "Send a message",
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0), //adjust the padding as needed
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true, // add this line
+                      fillColor: Colors.grey[200], // add this line for the filled color
+                    ),
+                  ),
+                ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.paperPlane),
-                onPressed: _isComposing ? () => _handleSubmitted(_textController.text) : null,
-              ),
-            ),
+            _isComposing
+                ? Container()
+                : const IconButton(
+                    icon: FaIcon(FontAwesomeIcons.camera),
+                    onPressed: null, // You need to handle what happens when the camera button is pressed
+                  ),
+            _isComposing
+                ? Container()
+                : const IconButton(
+                    icon: FaIcon(FontAwesomeIcons.microphone),
+                    onPressed: null, // You need to handle what happens when the microphone button is pressed
+                  ),
+            _isComposing
+                ? Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.paperPlane),
+                      onPressed: () => _handleSubmitted(_textController.text),
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),

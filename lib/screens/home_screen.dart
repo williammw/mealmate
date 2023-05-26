@@ -99,22 +99,24 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         isScrollControlled: true,
         isDismissible: false,
+        backgroundColor: Colors.transparent, // set background to transparent
         builder: (context) {
           // Get screen height using MediaQuery
-          double screenHeight = MediaQuery.of(context).size.height;
+          double screenHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
           return SizedBox(
             // Set container height to 90% of screen height
-            height: screenHeight * 0.9,
-            child: const ChatbotScreen(),
-
-            // SearchRestaurantChatbotScreen(
-            //   chatId: 'your_chat_id',
-            //   onBack: () {
-            //     final tabIndexNotifier = Provider.of<TabIndexNotifier>(context, listen: false);
-            //     tabIndexNotifier.setTabIndex(1); // Set the index of the Chat List tab
-            //   },
-            // ),
+            height: screenHeight * 0.95,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor, // set a color for your BottomSheet
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10), // give it a radius to make it rounded
+                  topRight: Radius.circular(10), // same as above
+                ),
+              ),
+              child: const ChatbotScreen(),
+            ),
           );
         },
       );
