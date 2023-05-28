@@ -47,17 +47,17 @@ android {
         applicationId "com.emf.mealmate"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
+        versionCode 3
         versionName flutterVersionName
     }
 
     signingConfigs {
         release {
-            storeFile file('mynewkeystore.jks')
+            storeFile file('my-release-key.jks')
             storePassword '65662316'
-            keyAlias 'myappkey'
+            keyAlias 'my-alias'
             keyPassword '65662316'
         }
     }

@@ -15,7 +15,7 @@ class Auth {
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/auth/login'),
+      Uri.parse('$apiUrl/appauth/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -40,7 +40,7 @@ class Auth {
     Logger().i('/signup $emailOrPhone , $password, $username, $fullName, $dob, $peopleDining');
     try {
       final response = await http.post(
-        Uri.parse('$apiUrl/auth/signup'),
+        Uri.parse('$apiUrl/appauth/signup'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(
           {

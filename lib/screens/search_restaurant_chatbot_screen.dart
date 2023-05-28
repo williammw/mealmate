@@ -91,7 +91,7 @@ class _SearchRestaurantChatbotScreenState extends State<SearchRestaurantChatbotS
     });
 
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/api/send_message_davinci'),
+      Uri.parse('${dotenv.env['API_URL']}/api/send_message'),
       body: json.encode({
         'message': message,
         'language_code': languageCode,

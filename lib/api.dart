@@ -19,7 +19,7 @@ class Api {
     Logger().i('verifySecurityCode Security Code: $securityCode');
     try {
       final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/auth/verify_security_code'), // Replace with your API endpoint
+        Uri.parse('${dotenv.env['API_URL']}/appauth/verify_security_code'), // Replace with your API endpoint
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'email': email, 'security_code': securityCode, 'auth_token': authToken},
       );
@@ -186,7 +186,7 @@ class Api {
     Logger().i('||sendMessage||');
     Logger().i(message.content);
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/api/send_message_davinci'),
+      Uri.parse('${dotenv.env['API_URL']}/api/send_message'),
       body: jsonEncode({'message': message.content, 'language_code': languageCode}),
       headers: {'Content-Type': 'application/json'},
     );

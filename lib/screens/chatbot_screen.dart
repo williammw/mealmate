@@ -9,6 +9,10 @@ import '../auth.dart';
 import '../models/new_chat_related_models.dart';
 import '../providers/userdetails_notifer.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_chat_bubble/bubble_type.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
+import 'package:chat_bubbles/chat_bubbles.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -28,7 +32,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   late String tempUserId;
   late UserDetailsProvider userDetailsProvider;
   late User userDetails;
-
+  // Create a focus node
+  final FocusNode _focusNode = FocusNode();
+  PopupMenuButton<String>? popupButton;
   @override
   void initState() {
     super.initState();
@@ -164,108 +170,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text('Chatbot'),
-          leading: IconButton(
-            icon: const FaIcon(FontAwesomeIcons.arrowLeft), // FaIcon back arrow
-            onPressed: () {
-              Logger().d("ARROW CICKED POP");
-              Navigator.pop(context); // On pressed, this will pop the Chatbot screen
-            },
-          ),
-        ),
-        body: Column(
-          children: <Widget>[
-            Flexible(
-              child: Stack(
-                children: [
-                  ListView.builder(
-                    // padding: EdgeInsets.all(8.0),
-                    reverse: true,
-                    itemCount: _chatHistory.length + (_isProcessing ? 1 : 0),
-                    itemBuilder: (_, int index) {
-                      if (_isProcessing && index == 0) {
-                        return Container(
-                          padding: const EdgeInsets.all(8),
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator(),
-                        );
-                      }
-
-                      // Subtracts 1 from the index when _isProcessing is true
-                      var messageIndex = _isProcessing ? index - 1 : index;
-                      var message = _chatHistory[messageIndex];
-                      bool isBot = message.sender == 'bot' ? true : false;
-                      final messageTime = timeago.format(message.createdAt, locale: 'en_short');
-                      GlobalKey _listTileKey = GlobalKey();
-
-                      return Container(
-                        color: isBot ? Colors.grey[400] : Colors.grey[300],
-                        child: ListTile(
-                          key: _listTileKey,
-                          contentPadding: const EdgeInsets.all(10),
-                          leading: isBot ? CircleAvatar(backgroundImage: NetworkImage(botAvatarUrl)) : null,
-                          trailing: isBot ? null : CircleAvatar(backgroundImage: NetworkImage(userAvatarUrl)),
-                          title: Align(
-                            alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                            child: Text(message.content),
-                          ),
-                          subtitle: Align(
-                            alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
-                            child: Text(messageTime),
-                          ),
-                          onLongPress: () {
-                            final RenderBox? overlay = Overlay.of(context)?.context.findRenderObject() as RenderBox?;
-                            final RenderBox? listTile = _listTileKey.currentContext?.findRenderObject() as RenderBox?;
-                            if (overlay != null && listTile != null) {
-                              showMenu(
-                                context: context,
-                                position: RelativeRect.fromRect(
-                                  listTile.localToGlobal(listTile.size.topCenter(Offset.zero), ancestor: overlay) & Size(40, 40),
-                                  Offset.zero & overlay.size,
-                                ),
-                                items: <PopupMenuEntry<String>>[
-                                  PopupMenuItem<String>(
-                                    value: message.content,
-                                    child: Row(
-                                      children: const <Widget>[
-                                        Icon(Icons.content_copy),
-                                        SizedBox(width: 10),
-                                        Text('Copy text'),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ).then<void>((String? value) {
-                                if (value != null) {
-                                  Clipboard.setData(ClipboardData(text: value));
-                                }
-                              });
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1.0),
-            Container(
-              decoration: BoxDecoration(color: Theme.of(context).cardColor),
-              child: _buildTextComposer(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
@@ -273,9 +177,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
-            IconButton(
-              icon: const FaIcon(FontAwesomeIcons.plus),
-              onPressed: null, // You need to handle what happens when the plus button is pressed
+            const IconButton(
+              icon: FaIcon(FontAwesomeIcons.plus),
+              onPressed: null,
             ),
             Flexible(
               child: Scrollbar(
@@ -284,8 +188,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   reverse: true,
                   child: TextField(
                     controller: _textController,
-                    minLines: 1, // Set minLines property
-                    maxLines: 4, // Set maxLines property
+                    focusNode: _focusNode,
+                    minLines: 1,
+                    maxLines: 4,
                     onChanged: (String text) {
                       setState(() {
                         _isComposing = text.isNotEmpty;
@@ -293,14 +198,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     },
                     onSubmitted: _handleSubmitted,
                     decoration: InputDecoration(
-                      hintText: "Send a message",
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0), //adjust the padding as needed
+                      hintText: 'Send a message',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide.none,
                       ),
-                      filled: true, // add this line
-                      fillColor: Colors.grey[200], // add this line for the filled color
+                      filled: true,
+                      fillColor: Colors.grey[200],
                     ),
                   ),
                 ),
@@ -310,13 +215,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ? Container()
                 : const IconButton(
                     icon: FaIcon(FontAwesomeIcons.camera),
-                    onPressed: null, // You need to handle what happens when the camera button is pressed
+                    onPressed: null,
                   ),
             _isComposing
                 ? Container()
                 : const IconButton(
                     icon: FaIcon(FontAwesomeIcons.microphone),
-                    onPressed: null, // You need to handle what happens when the microphone button is pressed
+                    onPressed: null,
                   ),
             _isComposing
                 ? Container(
@@ -328,6 +233,157 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   )
                 : Container(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageCard(Message message) {
+    bool isMine = message.sender != 'bot';
+    final currentTime = DateTime.now();
+    final timezoneOffset = currentTime.timeZoneOffset;
+    final localTime = message.createdAt.add(timezoneOffset);
+    final messageTime = timeago.format(localTime, locale: 'en_short');
+
+    return Padding(
+      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isMine ? null : Colors.grey[800], // Use white for all messages
+          borderRadius: BorderRadius.circular(15), // Rounded rectangle
+        ),
+        padding: EdgeInsets.only(bottom: 8.0),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start, // Align children to start
+            children: <Widget>[
+              CircleAvatar(
+                // Always show avatar
+                backgroundImage: NetworkImage(isMine ? userAvatarUrl : botAvatarUrl),
+                radius: 20,
+              ),
+              SizedBox(width: 10), // spacing between avatar and message
+              Expanded(
+                // Use Expanded instead of Flexible
+                child: GestureDetector(
+                  onLongPressStart: (LongPressStartDetails details) async {
+                    HapticFeedback.heavyImpact();
+                    final RenderBox box = context.findRenderObject() as RenderBox;
+                    final Offset localPosition = box.globalToLocal(details.globalPosition);
+
+                    final double bubbleHeight = box.size.height;
+                    final double bubbleWidth = box.size.width;
+
+                    await showMenu(
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                          localPosition.dx, localPosition.dy + bubbleHeight, localPosition.dx + bubbleWidth, localPosition.dy + bubbleHeight),
+                      items: <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'copy',
+                          child: Text('Copy'),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                        // TODO: Add more menu items here if needed
+                      ],
+                      elevation: 8.0,
+                    ).then((value) {
+                      // TODO: Handle menu selection here
+                      switch (value) {
+                        case 'copy':
+                          // TODO: Implement copying to clipboard
+                          break;
+                        case 'delete':
+                          // TODO: Implement deletion
+                          break;
+                      }
+                    });
+                  },
+                  child: Container(
+                    // decoration: BoxDecoration(
+                    //   color: Colors.white, // Use white for all messages
+                    //   borderRadius: BorderRadius.circular(15), // Rounded rectangle
+                    // ),
+                    padding: EdgeInsets.all(10.0), // Provide some padding within the bubble
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message.content,
+                          style: TextStyle(color: Colors.black, fontSize: 16), // Use black text
+                        ),
+                        SizedBox(height: 5), // spacing between message and timestamp
+                        Text(
+                          messageTime,
+                          style: TextStyle(color: Colors.black.withOpacity(0.7), fontSize: 10), // Use black text for timestamp
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // If popupButton is null, it means it's not open, so unfocus text field.
+        if (popupButton == null) {
+          _focusNode.unfocus();
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.grey[600],
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            title: const Text('Chatbot'),
+            leading: IconButton(
+              icon: const FaIcon(FontAwesomeIcons.arrowLeft),
+              onPressed: () {
+                Logger().d('ARROW CICKED POP');
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          body: Column(
+            children: <Widget>[
+              Flexible(
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: _chatHistory.length + (_isProcessing ? 1 : 0),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (_isProcessing && index == 0) {
+                      return Container(
+                        padding: const EdgeInsets.all(8),
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
+                    }
+                    var messageIndex = _isProcessing ? index - 1 : index;
+                    Message message = _chatHistory[messageIndex];
+                    bool isBot = message.sender == 'bot' ? true : false;
+                    return _buildMessageCard(message);
+                  },
+                ),
+              ),
+              const Divider(height: 1.0),
+              Container(
+                decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                child: _buildTextComposer(),
+              ),
+            ],
+          ),
         ),
       ),
     );
