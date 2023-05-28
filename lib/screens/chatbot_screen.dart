@@ -246,24 +246,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     final messageTime = timeago.format(localTime, locale: 'en_short');
 
     return Padding(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0, bottom: 8.0),
       child: Container(
         decoration: BoxDecoration(
           color: isMine ? null : Colors.grey[800], // Use white for all messages
           borderRadius: BorderRadius.circular(15), // Rounded rectangle
         ),
-        padding: EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start, // Align children to start
             children: <Widget>[
-              CircleAvatar(
-                // Always show avatar
-                backgroundImage: NetworkImage(isMine ? userAvatarUrl : botAvatarUrl),
-                radius: 20,
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                child: CircleAvatar(
+                  // Always show avatar
+                  backgroundImage: NetworkImage(isMine ? userAvatarUrl : botAvatarUrl),
+                  radius: 20,
+                ),
               ),
-              SizedBox(width: 10), // spacing between avatar and message
+              const SizedBox(width: 10), // spacing between avatar and message
               Expanded(
                 // Use Expanded instead of Flexible
                 child: GestureDetector(
@@ -314,12 +317,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       children: [
                         Text(
                           message.content,
-                          style: TextStyle(color: Colors.black, fontSize: 16), // Use black text
+                          style: TextStyle(color: Colors.white, fontSize: 16), // Use black text
                         ),
                         SizedBox(height: 5), // spacing between message and timestamp
                         Text(
                           messageTime,
-                          style: TextStyle(color: Colors.black.withOpacity(0.7), fontSize: 10), // Use black text for timestamp
+                          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10), // Use black text for timestamp
                         ),
                       ],
                     ),
@@ -347,7 +350,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           backgroundColor: Colors.grey[600],
           appBar: AppBar(
             backgroundColor: Colors.black,
-            title: const Text('Chatbot'),
+            title: const Text('Umami Agent'),
             leading: IconButton(
               icon: const FaIcon(FontAwesomeIcons.arrowLeft),
               onPressed: () {
