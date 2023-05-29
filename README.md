@@ -52,3 +52,5 @@ Develop an app that helps users get personalized meal recommendations from resta
 4. 'menu_image_capture.dart': A widget for capturing the menu image and processing it with OCR.
 5. 'meal_recommendation_card.dart': A widget for displaying a single meal recommendation.
 
+# image creation
+https://www.bing.com/images/create
