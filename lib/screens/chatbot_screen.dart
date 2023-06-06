@@ -9,10 +9,6 @@ import '../auth.dart';
 import '../models/new_chat_related_models.dart';
 import '../providers/userdetails_notifer.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:flutter_chat_bubble/bubble_type.dart';
-import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
-import 'package:chat_bubbles/chat_bubbles.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -311,15 +307,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     //   color: Colors.white, // Use white for all messages
                     //   borderRadius: BorderRadius.circular(15), // Rounded rectangle
                     // ),
-                    padding: EdgeInsets.all(10.0), // Provide some padding within the bubble
+                    padding: const EdgeInsets.all(10.0), // Provide some padding within the bubble
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           message.content,
-                          style: TextStyle(color: Colors.white, fontSize: 16), // Use black text
+                          style: const TextStyle(color: Colors.white, fontSize: 16), // Use black text
                         ),
-                        SizedBox(height: 5), // spacing between message and timestamp
+                        const SizedBox(height: 5), // spacing between message and timestamp
                         Text(
                           messageTime,
                           style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10), // Use black text for timestamp
